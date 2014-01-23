@@ -1,0 +1,173 @@
+package it.bioko.http;
+
+import it.bioko.http.requestbuilder.FieldsFromRequestBuilderFactory;
+import it.bioko.http.responsebuilder.JSONResponseBuilder;
+import it.bioko.http.responsebuilder.ResponseFromFieldsBuilder;
+import it.bioko.http.responsebuilder.ResponseFromFieldsBuilderFactory;
+import it.bioko.http.rest.FieldsFromRestRequestBuilder;
+import it.bioko.http.rest.RestResponseFromCommandExceptionBuilder;
+import it.bioko.http.rest.RestResponseFromSystemExceptionBuilder;
+import it.bioko.system.ConfigurationEnum;
+import it.bioko.system.KILL_ME.SystemNames;
+import it.bioko.system.KILL_ME.XSystem;
+import it.bioko.system.KILL_ME.XSystemIdentityCard;
+import it.bioko.system.KILL_ME.commons.GenericFieldNames;
+import it.bioko.system.KILL_ME.commons.logger.Loggers;
+import it.bioko.system.KILL_ME.exception.SystemException;
+import it.bioko.system.exceptions.SystemNotFoundException;
+import it.bioko.utils.fields.Fields;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.input.AutoCloseInputStream;
+import org.apache.log4j.PropertyConfigurator;
+
+import com.google.inject.Injector;
+import com.google.inject.Singleton;
+
+@Singleton
+@MultipartConfig
+public class BiokoServlet extends HttpServlet {
+
+	private static final long serialVersionUID = -2990444858272343398L;
+
+	private XServerSingleton _xServerSingleton;
+	private String _systemName;
+	private String _systemVersion;
+	private String _systemConfig;
+
+	private Map<String, FieldsFromRequestBuilder> _requestBuilders = FieldsFromRequestBuilderFactory.createRequestBuildersList();
+	private List<ResponseFromFieldsBuilder> _responseBuilders = ResponseFromFieldsBuilderFactory.createResponseBuildersList();
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		
+		_systemName = SystemNames.SYSTEM_A;
+		_systemVersion = "1.0";
+		_systemConfig = "DEV";
+
+		Injector injector = (Injector) config.getServletContext().getAttribute(Injector.class.getName());
+		_xServerSingleton = injector.getInstance(XServerSingleton.class);
+
+		Loggers.engagedInterface.info("System-Config: " + _systemName + " " + _systemVersion + " " + _systemConfig);
+		System.out.println("System-Config: " + _systemName + " " + _systemVersion + " " + _systemConfig);
+
+		loadLogProperties(_systemName);
+
+	}
+
+	@Override
+	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		restExposer(req, resp);
+	}
+	
+	@Override
+	public void destroy() {
+		Loggers.engagedInterface.info("Bioko servlet is going down");
+		Loggers.engagedInterface.info("Adios!");
+		_xServerSingleton.shutdown();
+		super.destroy();
+	}
+
+	private void restExposer(HttpServletRequest req, HttpServletResponse response) throws IOException, ServletException {
+
+		RequestWrapper requestWrapper = new RequestWrapper(req);
+		
+		Loggers.engagedInterface.debug(">>>>>>>>>>>>>>>>>>>> SERVLET >>>>>>>>>>>>>>>>>>>");
+		Loggers.engagedInterface.debug(requestWrapper.report());
+		Loggers.engagedInterface.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		
+		
+		
+		try {
+
+			Fields input = buildFieldsFromRequest(requestWrapper);
+
+			String pathTranslated = requestWrapper.getPathTranslated();
+			Loggers.engagedInterface.info("pathTranslated: " + pathTranslated);
+
+			Fields output = Fields.empty();
+
+			XSystemIdentityCard xSystemIdentityCard = new XSystemIdentityCard(_systemName, _systemVersion, ConfigurationEnum.valueOf(_systemConfig));
+			try {
+				XSystem serverInstance = _xServerSingleton.getSystem(xSystemIdentityCard, Loggers.engagedServer);
+				try {
+
+					output = serverInstance.execute(input);
+
+				} catch (SystemException exception) {
+					response = new RestResponseFromCommandExceptionBuilder()
+					.setInputFields(input)
+					.setOutputFields(output)
+					.setException(exception)
+					.build(response);
+				}
+			} catch (SystemNotFoundException exception) {
+				response = new RestResponseFromSystemExceptionBuilder()
+				.setOutputFields(output)
+				.setException(exception)
+				.build(response);
+			}
+
+			String responseType = output.stringNamed(GenericFieldNames.RESPONSE_CONTENT_TYPE);
+			if (responseType == null || responseType.isEmpty()) {
+				responseType = input.stringNamed(GenericFieldNames.RESPONSE_CONTENT_TYPE);
+			}
+
+			ResponseFromFieldsBuilder responseBuilder = new JSONResponseBuilder();
+			for (ResponseFromFieldsBuilder aBuilder : _responseBuilders) {
+				if (aBuilder.canHandle(responseType)) {
+					responseBuilder = aBuilder;
+					break;
+				}
+			}
+			responseBuilder.
+			setInput(input).
+			setOutput(output).
+			build(response);
+		} catch (Exception e) {
+			StringWriter writer = new StringWriter();
+			writer.append(Arrays.toString(e.getStackTrace()).replace(" ", "\n"));
+			Loggers.engagedInterface.error(writer);
+		}
+	}
+
+	private Fields buildFieldsFromRequest(HttpServletRequest request) {
+		FieldsFromRequestBuilder requestBuilder = new FieldsFromRestRequestBuilder();
+		for (FieldsFromRequestBuilder aBuilder : _requestBuilders.values()) {
+			if (aBuilder.canHandle(request)) {
+				requestBuilder = aBuilder;
+				break;
+			}
+		}
+
+		Fields input = requestBuilder.setRequest(request).build();
+		return input;
+	}
+
+	private void loadLogProperties(String systemName) {
+		try {
+			InputStream log4jPromo = new AutoCloseInputStream(getClass().getClassLoader().getResourceAsStream("log4j-" + systemName + ".properties"));
+			if (log4jPromo != null) {
+				PropertyConfigurator.configure(log4jPromo);
+				log4jPromo.close();		
+			}
+		} catch (Exception exception) {
+			Loggers.engagedInterface.error("Load properties file for logger", exception);
+		}
+	}
+
+}
