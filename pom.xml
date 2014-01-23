@@ -1,17 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>it.bioko</groupId>
+	<groupId>org.biokoframework</groupId>
 	<artifactId>http-exposer</artifactId>
-	<!--<packaging>war</packaging> -->
-	<version>0.4-SNAPSHOT</version>
-	<name>engaged-server</name>
-	<url>http://maven.apache.org</url>
+	
+	<version>0.1-SNAPSHOT</version>
+	<name>Bioko Framework</name>
+	<url>http://biokoframework.org</url>
 	<dependencies>
 		<dependency>
-			<groupId>it.bioko</groupId>
+			<groupId>org.biokoframework</groupId>
 			<artifactId>system</artifactId>
-			<version>0.4-SNAPSHOT</version>
+			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-httpclient</groupId>
