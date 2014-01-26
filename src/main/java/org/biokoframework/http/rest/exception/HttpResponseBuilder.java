@@ -27,19 +27,19 @@
 
 package org.biokoframework.http.rest.exception;
 
-import org.biokoframework.system.KILL_ME.exception.SystemException;
-
 import java.util.HashMap;
+
+import org.biokoframework.utils.exception.BiokoException;
 
 public class HttpResponseBuilder {
 
-	private HashMap<Class<? extends SystemException>, HttpError> _exceptionMap;
+	private HashMap<Class<? extends BiokoException>, HttpError> _exceptionMap;
 
-	public HttpResponseBuilder(HashMap<Class<? extends SystemException>, HttpError> exceptionMap) {
+	public HttpResponseBuilder(HashMap<Class<? extends BiokoException>, HttpError> exceptionMap) {
 		_exceptionMap = exceptionMap;
 	}
 
-	public HttpError buildFrom(SystemException _exception) {
+	public HttpError buildFrom(BiokoException _exception) {
 		HttpError httpError = _exceptionMap.get(_exception.getClass());
 		httpError.setBody(_exception.getErrors());
 		return httpError;

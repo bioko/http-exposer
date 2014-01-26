@@ -27,22 +27,22 @@
 
 package org.biokoframework.http.rest.exception;
 
+import java.util.HashMap;
+
 import org.biokoframework.system.KILL_ME.exception.CommandNotFoundException;
-import org.biokoframework.system.KILL_ME.exception.SystemException;
 import org.biokoframework.system.command.CommandException;
-import org.biokoframework.system.command.ValidationException;
 import org.biokoframework.system.entity.EntityNotFoundException;
 import org.biokoframework.system.exceptions.BadCommandInvocationException;
 import org.biokoframework.system.exceptions.EasterEggException;
 import org.biokoframework.system.service.authentication.AuthenticationFailureException;
-
-import java.util.HashMap;
+import org.biokoframework.utils.exception.BiokoException;
+import org.biokoframework.utils.exception.ValidationException;
 
 
 public class HttpResponseExceptionFactory {
 
-	public static HashMap<Class<? extends SystemException>, HttpError> create() {
-		HashMap<Class<? extends SystemException>, HttpError> exceptionMap = new HashMap<Class<? extends SystemException>, HttpError>();
+	public static HashMap<Class<? extends BiokoException>, HttpError> create() {
+		HashMap<Class<? extends BiokoException>, HttpError> exceptionMap = new HashMap<Class<? extends BiokoException>, HttpError>();
 		exceptionMap.put(BadCommandInvocationException.class, new HttpError(400));
 		exceptionMap.put(AuthenticationFailureException.class, new HttpError(401));
 		exceptionMap.put(EntityNotFoundException.class, new HttpError(404));
