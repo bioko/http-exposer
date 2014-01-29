@@ -33,7 +33,6 @@ import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
 import org.biokoframework.system.exceptions.SystemNotFoundException;
 import org.biokoframework.utils.fields.Fields;
-import org.json.simple.JSONArray;
 
 public class RestResponseFromSystemExceptionBuilder {
 
@@ -41,13 +40,9 @@ public class RestResponseFromSystemExceptionBuilder {
 	
 	private SystemNotFoundException _exception;
 
-	@SuppressWarnings("unchecked")
 	public HttpServletResponse build(HttpServletResponse response) {
 		response.setStatus(404);
-		JSONArray jsonResponse = new JSONArray();
-		jsonResponse.add(_exception.error());
-		
-		_output.put(GenericFieldNames.RESPONSE, jsonResponse);
+		_output.put(GenericFieldNames.RESPONSE, _exception.getErrors());
 		_output.put(GenericFieldNames.RESPONSE_CONTENT_TYPE, GenericFieldValues.JSON_CONTENT_TYPE);
 		return response;
 	}

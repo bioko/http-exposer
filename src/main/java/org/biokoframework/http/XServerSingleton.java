@@ -58,7 +58,7 @@ public class XServerSingleton {
 		_systemContextFactory = contextFactory;
 	}
 
-	public XSystem getSystem(XSystemIdentityCard xSystemIdentityCard, Logger logger) throws SystemNotFoundException {
+	public XSystem getSystem(XSystemIdentityCard xSystemIdentityCard, Logger logger) throws SystemException {
 		logger.info("Getting system: " + xSystemIdentityCard.report());
 		XSystem system = _systems.get(xSystemIdentityCard);
 		if (system == null) {
