@@ -27,10 +27,9 @@
 
 package org.biokoframework.http;
 
-import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
-
 import javax.servlet.http.HttpServletRequest;
 
+import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.utils.fields.Fields;
 
 public abstract class FieldsFromRequestBuilder {

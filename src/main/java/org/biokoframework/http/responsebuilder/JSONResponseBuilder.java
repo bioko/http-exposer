@@ -27,14 +27,13 @@
 
 package org.biokoframework.http.responsebuilder;
 
-import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
-import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
-import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
-
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
+import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
+import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
 import org.biokoframework.utils.fields.Fields;
 import org.json.simple.JSONValue;
 

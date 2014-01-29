@@ -27,6 +27,10 @@
 
 package org.biokoframework.http.rest;
 
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.biokoframework.http.rest.exception.HttpError;
 import org.biokoframework.http.rest.exception.HttpResponseBuilder;
 import org.biokoframework.http.rest.exception.HttpResponseExceptionFactory;
@@ -34,11 +38,6 @@ import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
 import org.biokoframework.system.KILL_ME.exception.SystemException;
 import org.biokoframework.system.exceptions.ErrorMessagesFactory;
-
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.biokoframework.utils.domain.ErrorEntity;
 import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;

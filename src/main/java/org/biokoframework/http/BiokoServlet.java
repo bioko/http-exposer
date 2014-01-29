@@ -27,22 +27,6 @@
 
 package org.biokoframework.http;
 
-import org.biokoframework.http.requestbuilder.FieldsFromRequestBuilderFactory;
-import org.biokoframework.http.responsebuilder.JSONResponseBuilder;
-import org.biokoframework.http.responsebuilder.ResponseFromFieldsBuilder;
-import org.biokoframework.http.responsebuilder.ResponseFromFieldsBuilderFactory;
-import org.biokoframework.http.rest.FieldsFromRestRequestBuilder;
-import org.biokoframework.http.rest.RestResponseFromCommandExceptionBuilder;
-import org.biokoframework.http.rest.RestResponseFromSystemExceptionBuilder;
-import org.biokoframework.system.ConfigurationEnum;
-import org.biokoframework.system.KILL_ME.SystemNames;
-import org.biokoframework.system.KILL_ME.XSystem;
-import org.biokoframework.system.KILL_ME.XSystemIdentityCard;
-import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
-import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
-import org.biokoframework.system.KILL_ME.exception.SystemException;
-import org.biokoframework.system.exceptions.SystemNotFoundException;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -59,6 +43,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.log4j.PropertyConfigurator;
+import org.biokoframework.http.requestbuilder.FieldsFromRequestBuilderFactory;
+import org.biokoframework.http.responsebuilder.JSONResponseBuilder;
+import org.biokoframework.http.responsebuilder.ResponseFromFieldsBuilder;
+import org.biokoframework.http.responsebuilder.ResponseFromFieldsBuilderFactory;
+import org.biokoframework.http.rest.FieldsFromRestRequestBuilder;
+import org.biokoframework.http.rest.RestResponseFromCommandExceptionBuilder;
+import org.biokoframework.http.rest.RestResponseFromSystemExceptionBuilder;
+import org.biokoframework.system.ConfigurationEnum;
+import org.biokoframework.system.KILL_ME.SystemNames;
+import org.biokoframework.system.KILL_ME.XSystem;
+import org.biokoframework.system.KILL_ME.XSystemIdentityCard;
+import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
+import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
+import org.biokoframework.system.KILL_ME.exception.SystemException;
+import org.biokoframework.system.exceptions.SystemNotFoundException;
 import org.biokoframework.utils.fields.Fields;
 
 import com.google.inject.Injector;

@@ -27,11 +27,6 @@
 
 package org.biokoframework.http.responsebuilder;
 
-import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
-import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
-import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
-import org.biokoframework.system.entity.binary.BinaryEntity;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,6 +35,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
+import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
+import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
+import org.biokoframework.system.entity.binary.BinaryEntity;
 import org.biokoframework.utils.fields.Fields;
 
 public class BinaryResponseBuilder extends ResponseFromFieldsBuilder {

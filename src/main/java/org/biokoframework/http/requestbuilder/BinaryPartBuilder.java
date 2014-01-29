@@ -27,15 +27,14 @@
 
 package org.biokoframework.http.requestbuilder;
 
-import org.biokoframework.http.multipart.RequestPart;
-import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
-import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
-import org.biokoframework.system.entity.binary.BinaryEntity;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.biokoframework.http.multipart.RequestPart;
+import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
+import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
+import org.biokoframework.system.entity.binary.BinaryEntity;
 import org.biokoframework.utils.fields.Fields;
 
 public class BinaryPartBuilder implements FieldsFromPartBuilder {

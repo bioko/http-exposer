@@ -32,7 +32,6 @@ import static org.hamcrest.Matchers.equalTo;
 
 import java.util.HashMap;
 
-import org.biokoframework.http.rest.FieldsFromRestRequestBuilder;
 import org.biokoframework.utils.domain.DomainEntity;
 import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;

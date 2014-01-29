@@ -27,13 +27,6 @@
 
 package org.biokoframework.http.requestbuilder;
 
-import org.biokoframework.http.multipart.MultipartParser;
-import org.biokoframework.http.multipart.RequestPart;
-import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
-import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
-import org.biokoframework.system.KILL_ME.commons.HttpMethod;
-import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,6 +34,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.biokoframework.http.multipart.MultipartParser;
+import org.biokoframework.http.multipart.RequestPart;
+import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
+import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
+import org.biokoframework.system.KILL_ME.commons.HttpMethod;
+import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
 import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;
 

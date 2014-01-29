@@ -27,12 +27,11 @@
 
 package org.biokoframework.http.rest;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
 import org.biokoframework.system.exceptions.SystemNotFoundException;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.biokoframework.utils.fields.Fields;
 import org.json.simple.JSONArray;
 

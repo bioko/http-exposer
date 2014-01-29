@@ -27,6 +27,12 @@
 
 package org.biokoframework.http.rest;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.requestbuilder.FieldsFromNonMultipartRequestRequestBuilder;
 import org.biokoframework.system.KILL_ME.commons.GenericCommandNames;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
@@ -34,13 +40,6 @@ import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
 import org.biokoframework.system.entity.EntityClassNameTranslator;
-
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.utils.domain.DomainEntity;
 import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;
