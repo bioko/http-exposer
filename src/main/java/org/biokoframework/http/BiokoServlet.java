@@ -57,7 +57,7 @@ import org.biokoframework.system.KILL_ME.XSystemIdentityCard;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
 import org.biokoframework.system.KILL_ME.exception.SystemException;
-import org.biokoframework.system.exceptions.SystemNotFoundException;
+import org.biokoframework.utils.exception.BiokoException;
 import org.biokoframework.utils.fields.Fields;
 
 import com.google.inject.Injector;
@@ -125,7 +125,7 @@ public class BiokoServlet extends HttpServlet {
 			String pathTranslated = requestWrapper.getPathTranslated();
 			Loggers.engagedInterface.info("pathTranslated: " + pathTranslated);
 
-			Fields output = Fields.empty();
+			Fields output = new Fields();
 
 			XSystemIdentityCard xSystemIdentityCard = new XSystemIdentityCard(_systemName, _systemVersion, ConfigurationEnum.valueOf(_systemConfig));
 			try {
@@ -135,18 +135,18 @@ public class BiokoServlet extends HttpServlet {
 
 					output = serverInstance.execute(input);
 
-				} catch (SystemException exception) {
+				} catch (BiokoException exception) {
 					response = new RestResponseFromCommandExceptionBuilder()
 					.setInputFields(input)
 					.setOutputFields(output)
 					.setException(exception)
 					.build(response);
 				}
-			} catch (SystemNotFoundException exception) {
+			} catch (SystemException exception) {
 				response = new RestResponseFromSystemExceptionBuilder()
-				.setOutputFields(output)
-				.setException(exception)
-				.build(response);
+						.setOutputFields(output)
+						.setException(exception)
+						.build(response);
 			}
 
 			String responseType = output.get(GenericFieldNames.RESPONSE_CONTENT_TYPE);

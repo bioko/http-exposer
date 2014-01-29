@@ -36,16 +36,16 @@ import org.biokoframework.http.rest.exception.HttpResponseBuilder;
 import org.biokoframework.http.rest.exception.HttpResponseExceptionFactory;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
-import org.biokoframework.system.KILL_ME.exception.SystemException;
 import org.biokoframework.system.exceptions.ErrorMessagesFactory;
 import org.biokoframework.utils.domain.ErrorEntity;
+import org.biokoframework.utils.exception.BiokoException;
 import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;
 
 public class RestResponseFromCommandExceptionBuilder {
 	
 	private Fields _outputFields;
-	private SystemException _exception;
+	private BiokoException _exception;
 
 	public HttpServletResponse build(HttpServletResponse response) {
 		
@@ -95,7 +95,7 @@ public class RestResponseFromCommandExceptionBuilder {
 		return this;
 	}
 	
-	public RestResponseFromCommandExceptionBuilder setException(SystemException exception) {
+	public RestResponseFromCommandExceptionBuilder setException(BiokoException exception) {
 		_exception = exception;
 		return this;
 	}

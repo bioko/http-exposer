@@ -31,14 +31,14 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
-import org.biokoframework.system.exceptions.SystemNotFoundException;
+import org.biokoframework.system.KILL_ME.exception.SystemException;
 import org.biokoframework.utils.fields.Fields;
 
 public class RestResponseFromSystemExceptionBuilder {
 
 	private Fields _output;
 	
-	private SystemNotFoundException _exception;
+	private SystemException _exception;
 
 	public HttpServletResponse build(HttpServletResponse response) {
 		response.setStatus(404);
@@ -52,7 +52,7 @@ public class RestResponseFromSystemExceptionBuilder {
 		return this;
 	}
 
-	public RestResponseFromSystemExceptionBuilder setException(SystemNotFoundException exception) {
+	public RestResponseFromSystemExceptionBuilder setException(SystemException exception) {
 		_exception = exception;
 		return this;
 	}

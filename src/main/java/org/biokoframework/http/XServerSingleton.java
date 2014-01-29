@@ -34,7 +34,6 @@ import org.biokoframework.system.KILL_ME.XSystem;
 import org.biokoframework.system.KILL_ME.XSystemIdentityCard;
 import org.biokoframework.system.KILL_ME.exception.SystemException;
 import org.biokoframework.system.exceptions.SystemExceptionsFactory;
-import org.biokoframework.system.exceptions.SystemNotFoundException;
 import org.biokoframework.system.factory.AnnotatedSystemFactory;
 import org.biokoframework.system.service.context.ContextFactory;
 
@@ -62,11 +61,7 @@ public class XServerSingleton {
 		logger.info("Getting system: " + xSystemIdentityCard.report());
 		XSystem system = _systems.get(xSystemIdentityCard);
 		if (system == null) {
-			try {
-				system = createSystem(xSystemIdentityCard);
-			} catch (SystemException exception) {
-				throw SystemExceptionsFactory.createSystemNotFound(xSystemIdentityCard);
-			}
+			system = createSystem(xSystemIdentityCard);
 			_systems.put(xSystemIdentityCard, system);
 			return system;
 		}
@@ -77,11 +72,11 @@ public class XServerSingleton {
 	// per tirare fuori il sistema corretto.
 	// da provare quando tutti i test sono a posto
 	
-	private XSystem createSystem(XSystemIdentityCard identityCard) throws SystemNotFoundException, SystemException {
+	private XSystem createSystem(XSystemIdentityCard identityCard) throws SystemException {
 		try {
 			return AnnotatedSystemFactory.createSystem(identityCard, _systemContextFactory, _annotatedSystemCommands);
 		} catch (Exception exception) {
-			throw new SystemException(exception);
+			throw SystemExceptionsFactory.createSystemBootException(exception);
 		}
 	}
 	
