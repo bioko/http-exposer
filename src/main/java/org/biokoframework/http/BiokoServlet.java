@@ -150,9 +150,9 @@ public class BiokoServlet extends HttpServlet {
 				.build(response);
 			}
 
-			String responseType = output.stringNamed(GenericFieldNames.RESPONSE_CONTENT_TYPE);
+			String responseType = output.get(GenericFieldNames.RESPONSE_CONTENT_TYPE);
 			if (responseType == null || responseType.isEmpty()) {
-				responseType = input.stringNamed(GenericFieldNames.RESPONSE_CONTENT_TYPE);
+				responseType = input.get(GenericFieldNames.RESPONSE_CONTENT_TYPE);
 			}
 
 			ResponseFromFieldsBuilder responseBuilder = new JSONResponseBuilder();

@@ -76,7 +76,6 @@ public class OnlyGetRequestBuilder extends FieldsFromNonMultipartRequestRequestB
 		return pathInfo.matches(ONLY_GET_REGEXP);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Fields build() {
 		Fields fields = Fields.empty();
@@ -90,16 +89,16 @@ public class OnlyGetRequestBuilder extends FieldsFromNonMultipartRequestRequestB
 			if (key.matches(OBJECT_REGEXP)) {
 				String actualKey = key.substring(0, key.indexOf('.'));
 				HashMap<String, Object> map = new HashMap<String, Object>();
-				if (fields.valueFor(actualKey) != null) {
-					map = (HashMap<String, Object>) fields.valueFor(actualKey);
+				if (fields.get(actualKey) != null) {
+					map = fields.get(actualKey);
 				}
 				expandObject(key, map , _parameters.get(key));
 				fields.put(actualKey, map);
 			} else if (key.matches(ARRAY_REGEXP)) {
 				String actualKey = key.substring(0, key.indexOf('['));
 				ArrayList<Object> list = new ArrayList<Object>();
-				if (fields.valueFor(actualKey) != null) {
-					list = (ArrayList<Object>) fields.valueFor(actualKey);
+				if (fields.get(actualKey) != null) {
+					list = fields.get(actualKey);
 				}
 				expandArray(key, list, _parameters.get(key));
 				fields.put(actualKey, list);

@@ -73,7 +73,7 @@ public class FieldsFromRestURLBuilderTest {
 		
 		assertThat(actual.keys(), equalTo(expected.keys()));
 		for (String aKey : expected.keys()) {
-			assertThat(actual.valueFor(aKey), equalTo(expected.valueFor(aKey)));
+			assertThat(actual.get(aKey), equalTo(expected.get(aKey)));
 		}
 	}
 }

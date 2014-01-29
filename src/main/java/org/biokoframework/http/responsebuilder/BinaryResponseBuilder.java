@@ -63,9 +63,9 @@ public class BinaryResponseBuilder extends ResponseFromFieldsBuilder {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void build(HttpServletResponse servletResponse) throws Exception {
-		servletResponse.setContentType(_output.stringNamed(GenericFieldNames.RESPONSE_CONTENT_TYPE));
+		servletResponse.setContentType(_output.get(GenericFieldNames.RESPONSE_CONTENT_TYPE).toString());
 		
-		Object response = _output.valueFor(GenericFieldNames.RESPONSE);
+		Object response = _output.get(GenericFieldNames.RESPONSE);
 		InputStream inputStream = null;
 		if (response instanceof InputStream) {
 			// Backward compatibility
@@ -73,7 +73,7 @@ public class BinaryResponseBuilder extends ResponseFromFieldsBuilder {
 		} else {
 			BinaryEntity blob  = ((ArrayList<BinaryEntity>) response).get(0);
 			
-			servletResponse.setHeader("Content-Length", blob.get(BinaryEntity.SIZE_BYTES));
+			servletResponse.setHeader("Content-Length", blob.get(BinaryEntity.SIZE_BYTES).toString());
 			inputStream = blob.getStream();
 		}
 
@@ -84,8 +84,7 @@ public class BinaryResponseBuilder extends ResponseFromFieldsBuilder {
 			outputStream.close();
 		}
 		
-		Loggers.engagedInterface.info("OUT: binary file - " + 
-				_output.stringNamed(GenericFieldNames.RESPONSE_CONTENT_TYPE));
+		Loggers.engagedInterface.info("OUT: binary file - " + _output.get(GenericFieldNames.RESPONSE_CONTENT_TYPE));
 	}
 
 	@Override
