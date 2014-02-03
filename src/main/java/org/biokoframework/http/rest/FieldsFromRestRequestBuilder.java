@@ -128,7 +128,7 @@ public class FieldsFromRestRequestBuilder extends FieldsFromNonMultipartRequestR
 	}
 
 	private Fields get(String entity, String entityId, String body, String httpMethod, Map<String, String[]> parameters) {
-		Fields result = Fields.empty();
+		Fields result = new Fields();
 		insertId(result, entity, entityId);
 		result.putAll(fieldsForParameterMap(parameters));
 		return result;
@@ -153,7 +153,7 @@ public class FieldsFromRestRequestBuilder extends FieldsFromNonMultipartRequestR
 	}
 
 	private Fields fieldsForParameterMap(Map<String, String[]> parameters) {
-		Fields fields = Fields.empty();
+		Fields fields = new Fields();
 		for (Entry<String, String[]> aParameter : parameters.entrySet()) {
 			if (aParameter.getValue().length == 1) {
 				fields.put(aParameter.getKey(), aParameter.getValue()[0]);
@@ -170,14 +170,13 @@ public class FieldsFromRestRequestBuilder extends FieldsFromNonMultipartRequestR
 	}
 
 	private Fields post(String entity, String action, String body, String httpMethod) {
-		Fields result = Fields.empty();
-		result.fromJson(body);
+		Fields result = Fields.fromJson(body);
 		insertId(result, entity, action);
 		return result;
 	}
 	
 	private Fields options(String entity, String action, String body, String httpMethod, Map<String, String[]> parameters) {
-		Fields result = Fields.empty();
+		Fields result = new Fields();
 		if (entity.toUpperCase().equals(GenericCommandNames.COMMAND_INVOCATION_INFO)) {
 			result.put(FieldNames.COMMAND_INFORMATION_ON, action);
 		} else {

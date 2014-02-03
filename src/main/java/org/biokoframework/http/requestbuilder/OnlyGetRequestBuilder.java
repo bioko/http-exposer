@@ -77,7 +77,7 @@ public class OnlyGetRequestBuilder extends FieldsFromNonMultipartRequestRequestB
 	
 	@Override
 	public Fields build() {
-		Fields fields = Fields.empty();
+		Fields fields = new Fields();
 		
 		applyRenamingMap(_parameters, _keyRenameMap);
 		

@@ -161,7 +161,7 @@ public class FieldsFromMultipartRequestBuilder extends FieldsFromRequestBuilder 
 //			inputStream.close();
 		} catch (IOException exception) {
 			Loggers.engagedInterface.error("Parsing part", exception);
-			return Fields.empty();
+			return new Fields();
 		}
 		
 		return Fields.single(part.getName(), writer.toString());

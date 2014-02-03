@@ -51,10 +51,10 @@ public class BinaryPartBuilder implements FieldsFromPartBuilder {
 				append("content size: " + aPart.getSize() + "\n").
 				toString());
 				
-		Fields fields = Fields.empty(); 
+		Fields fields = new Fields(); 
 
 		try {
-			Fields blobFields = Fields.empty();
+			Fields blobFields = new Fields();
 			//blobFields.put(Blob.STREAM, aPart.getInputStream());			
 			blobFields.put(BinaryEntity.MEDIA_TYPE, aPart.getContentType());
 			blobFields.put(BinaryEntity.SIZE_BYTES, Long.toString(aPart.getSize()));
@@ -63,7 +63,7 @@ public class BinaryPartBuilder implements FieldsFromPartBuilder {
 			fields.put(aPart.getName(), blob);
 		} catch (IOException exception) {
 			Loggers.engagedInterface.error("Accessing stream of request content part ("+aPart.getName()+","+aPart.getContentType()+")", exception);
-			return Fields.empty();
+			return new Fields();
 		}
 		
 		return fields;
