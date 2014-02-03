@@ -87,6 +87,13 @@ public class BiokoServlet extends HttpServlet {
 
 		Injector injector = (Injector) config.getServletContext().getAttribute(Injector.class.getName());
 		_xServerSingleton = injector.getInstance(XServerSingleton.class);
+		
+		try {
+			XSystemIdentityCard xSystemIdentityCard = new XSystemIdentityCard(_systemName, _systemVersion, ConfigurationEnum.valueOf(_systemConfig));
+			_xServerSingleton.getSystem(xSystemIdentityCard, Loggers.engagedServer);
+		} catch (SystemException exception) {
+			throw new ServletException("Error creating system", exception);
+		}
 
 		Loggers.engagedInterface.info("System-Config: " + _systemName + " " + _systemVersion + " " + _systemConfig);
 		System.out.println("System-Config: " + _systemName + " " + _systemVersion + " " + _systemConfig);
