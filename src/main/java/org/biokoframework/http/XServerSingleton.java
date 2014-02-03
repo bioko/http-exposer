@@ -68,10 +68,6 @@ public class XServerSingleton {
 		return _systems.get(xSystemIdentityCard);
 	}
 	
-	// TODO i metodi qui sotto sono quadruplicati, credo basterebbe la IdentityCard
-	// per tirare fuori il sistema corretto.
-	// da provare quando tutti i test sono a posto
-	
 	private XSystem createSystem(XSystemIdentityCard identityCard) throws SystemException {
 		try {
 			return AnnotatedSystemFactory.createSystem(identityCard, _systemContextFactory, _annotatedSystemCommands);
