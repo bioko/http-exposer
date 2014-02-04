@@ -75,7 +75,7 @@ public class FieldsFromMultipartRequestBuilder extends FieldsFromRequestBuilder 
 			result.put(DomainEntity.ID, entityId);
 		}
 		
-		if (_headerToken != null && !result.contains(GenericFieldNames.AUTH_TOKEN)) {
+		if (_headerToken != null && !result.containsKey(GenericFieldNames.AUTH_TOKEN)) {
 			result.put(GenericFieldNames.AUTH_TOKEN, _headerToken);
 		}
 		if (_basicAuthentication != null) {

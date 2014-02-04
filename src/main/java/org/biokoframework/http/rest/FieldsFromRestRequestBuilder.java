@@ -102,7 +102,7 @@ public class FieldsFromRestRequestBuilder extends FieldsFromNonMultipartRequestR
 //		methodToFieldsHandler.put("DELETE", "get");
 //		methodToFieldsHandler.put("OPTIONS", "options");
 		
-		if (_headerToken != null && !result.contains(GenericFieldNames.AUTH_TOKEN)) {
+		if (_headerToken != null && !result.containsKey(GenericFieldNames.AUTH_TOKEN)) {
 			result.put(GenericFieldNames.AUTH_TOKEN, _headerToken);
 		}
 		if (_basicAuthentication != null) {
