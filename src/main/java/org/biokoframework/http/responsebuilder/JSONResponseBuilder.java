@@ -51,10 +51,10 @@ public class JSONResponseBuilder extends ResponseFromFieldsBuilder {
 	public void build(HttpServletResponse response) throws Exception {
 		Object responseJSON = _output.get(GenericFieldNames.RESPONSE);
 		
-		if (_output.contains(GenericFieldNames.TOKEN_HEADER)) {
+		if (_output.containsKey(GenericFieldNames.TOKEN_HEADER)) {
 			response.addHeader(GenericFieldNames.TOKEN_HEADER, _output.get(GenericFieldNames.TOKEN_HEADER).toString());
 		}
-		if (_output.contains(GenericFieldNames.TOKEN_EXPIRE_HEADER)) {
+		if (_output.containsKey(GenericFieldNames.TOKEN_EXPIRE_HEADER)) {
 			response.addHeader(GenericFieldNames.TOKEN_EXPIRE_HEADER, _output.get(GenericFieldNames.TOKEN_EXPIRE_HEADER).toString());
 		}
 	

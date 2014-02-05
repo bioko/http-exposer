@@ -29,6 +29,7 @@ package org.biokoframework.http.rest;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
 
 import java.util.HashMap;
 
@@ -70,9 +71,9 @@ public class FieldsFromRestURLBuilderTest {
 		fieldsBuilder.setBody("");
 		Fields actual = fieldsBuilder.build();
 		
-		assertThat(actual.keys(), equalTo(expected.keys()));
+		assertThat(actual.keys(), is(equalTo(expected.keys())));
 		for (String aKey : expected.keys()) {
-			assertThat(actual.get(aKey), equalTo(expected.get(aKey)));
+			assertThat(actual.get(aKey), is(equalTo(expected.get(aKey))));
 		}
 	}
 }
