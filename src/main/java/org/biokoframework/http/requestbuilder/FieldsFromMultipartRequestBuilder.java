@@ -70,7 +70,7 @@ public class FieldsFromMultipartRequestBuilder extends FieldsFromRequestBuilder 
 		String entity = splittedPath[1];
 		String entityId = splittedPath.length > 2 ? splittedPath[2] : null;
 			
-		Fields result = Fields.single(FieldNames.COMMAND_NAME, GenericCommandNames.composeCommandName(_method, entity));
+		Fields result = new Fields(FieldNames.COMMAND_NAME, GenericCommandNames.composeCommandName(_method, entity));
 		if (entityId != null) {
 			result.put(DomainEntity.ID, entityId);
 		}
@@ -164,7 +164,7 @@ public class FieldsFromMultipartRequestBuilder extends FieldsFromRequestBuilder 
 			return new Fields();
 		}
 		
-		return Fields.single(part.getName(), writer.toString());
+		return new Fields(part.getName(), writer.toString());
 	}
 	
 	@Override

@@ -79,8 +79,9 @@ public class RestResponseFromCommandExceptionBuilder {
 					append(" ...]").
 					toString();
 			
-			Fields fields = Fields.single(ErrorEntity.ERROR_MESSAGE, message);
-			fields.put(ErrorEntity.ERROR_CODE, FieldNames.CONTAINER_EXCEPTION_CODE);
+			Fields fields = new Fields(
+					ErrorEntity.ERROR_MESSAGE, message,
+					ErrorEntity.ERROR_CODE, FieldNames.CONTAINER_EXCEPTION_CODE);
 			errorWithEceptionMessage.add(new ErrorEntity(fields));
 		}
 		return new HttpError(500, errorWithEceptionMessage);
