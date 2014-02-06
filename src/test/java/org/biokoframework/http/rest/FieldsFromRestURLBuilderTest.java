@@ -48,7 +48,7 @@ public class FieldsFromRestURLBuilderTest {
 	
 	@Test
 	public void contactGet() {
-		Fields expected = Fields.single(FieldNames.COMMAND_NAME, "GET_contact");
+		Fields expected = new Fields(FieldNames.COMMAND_NAME, "GET_contact");
 		expected.put(DomainEntity.ID, "1");
 		
 		FieldsFromRestRequestBuilder fieldsBuilder = new FieldsFromRestRequestBuilder();
@@ -63,7 +63,7 @@ public class FieldsFromRestURLBuilderTest {
 	
 	@Test
 	public void contactPost() {
-		Fields expected = Fields.single(FieldNames.COMMAND_NAME, "POST_contact");
+		Fields expected = new Fields(FieldNames.COMMAND_NAME, "POST_contact");
 		
 		FieldsFromRestRequestBuilder fieldsBuilder = new FieldsFromRestRequestBuilder();
 		fieldsBuilder.setPathInfo("/contact/");
