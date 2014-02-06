@@ -38,46 +38,49 @@ import org.biokoframework.system.factory.AnnotatedSystemFactory;
 import org.biokoframework.system.service.context.ContextFactory;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
 @Singleton
 public class XServerSingleton {
 
-	private final Class<?>_annotatedSystemCommands;
-	private final ContextFactory _systemContextFactory;
+	private final Class<?>fAnnotatedSystemCommands;
+	private final ContextFactory fSystemContextFactory;
 	
-	private Hashtable<XSystemIdentityCard, XSystem> _systems;
+	private Hashtable<XSystemIdentityCard, XSystem> fSystems;
+	private Injector fInjector;
 	
 	@Inject
-	public XServerSingleton(@Named("Commands") Class<?> commandsClass, ContextFactory contextFactory) {
-		_systems = new Hashtable<XSystemIdentityCard, XSystem>();
+	public XServerSingleton(@Named("Commands") Class<?> commandsClass, ContextFactory contextFactory, Injector injector) {
+		fSystems = new Hashtable<XSystemIdentityCard, XSystem>();
 		
-		_annotatedSystemCommands = commandsClass;
-		_systemContextFactory = contextFactory;
+		fAnnotatedSystemCommands = commandsClass;
+		fSystemContextFactory = contextFactory;
+		fInjector = injector;
 	}
 
 	public XSystem getSystem(XSystemIdentityCard xSystemIdentityCard, Logger logger) throws SystemException {
 		logger.info("Getting system: " + xSystemIdentityCard.report());
-		XSystem system = _systems.get(xSystemIdentityCard);
+		XSystem system = fSystems.get(xSystemIdentityCard);
 		if (system == null) {
 			system = createSystem(xSystemIdentityCard);
-			_systems.put(xSystemIdentityCard, system);
+			fSystems.put(xSystemIdentityCard, system);
 			return system;
 		}
-		return _systems.get(xSystemIdentityCard);
+		return fSystems.get(xSystemIdentityCard);
 	}
 	
 	private XSystem createSystem(XSystemIdentityCard identityCard) throws SystemException {
 		try {
-			return AnnotatedSystemFactory.createSystem(identityCard, _systemContextFactory, _annotatedSystemCommands);
+			return AnnotatedSystemFactory.createSystem(identityCard, fSystemContextFactory, fAnnotatedSystemCommands, fInjector);
 		} catch (Exception exception) {
 			throw SystemExceptionsFactory.createSystemBootException(exception);
 		}
 	}
 	
 	public void shutdown() {
-		for (XSystem aSystem : _systems.values()) {
+		for (XSystem aSystem : fSystems.values()) {
 			aSystem.shutdown();
 		}
 	}
