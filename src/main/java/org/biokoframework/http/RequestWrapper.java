@@ -36,6 +36,7 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -69,7 +70,21 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 		ServletInputStream inputStream = new ServletInputStream() {  
 			public int read () throws IOException {  
 				return byteArrayInputStream.read();  
-			}  
+			}
+
+			@Override
+			public boolean isFinished() {
+				return byteArrayInputStream.available() > 0;
+			}
+
+			@Override
+			public boolean isReady() {
+				return true;
+			}
+
+			@Override
+			public void setReadListener(ReadListener readListener) {
+			}
 		};
 
 		return inputStream;  
