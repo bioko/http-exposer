@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2014																 
+ *	Mikol Faro			<mikol.faro@gmail.com>
+ *	Simone Mangano		<simone.mangano@ieee.org>
+ *	Mattia Tortorelli	<mattia.tortorelli@gmail.com>
+ *
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+
+package org.biokoframework.http.routing.impl;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.biokoframework.http.routing.IHttpRouteParser;
+import org.biokoframework.http.routing.IRoute;
+import org.biokoframework.http.routing.RouteNotSupportedException;
+import org.biokoframework.system.KILL_ME.commons.HttpMethod;
+import org.hsqldb.types.Charset;
+
+/**
+ * 
+ * @author Mikol Faro <mikol.faro@gmail.com>
+ * @date Feb 15, 2014
+ *
+ */
+public class DefaultRouteParser implements IHttpRouteParser {
+
+	private static final String UTF8 = "utf8";
+
+	@Override
+	public IRoute getRoute(HttpServletRequest request) throws RouteNotSupportedException {
+		return new RouteImpl(getMethod(request), getPath(request));
+	}
+
+	private HttpMethod getMethod(HttpServletRequest request) throws RouteNotSupportedException {
+		try {
+			String method = request.getMethod();
+			return HttpMethod.valueOf(method);
+		} catch (IllegalArgumentException exception) {
+			throw new RouteNotSupportedException(exception);
+		}
+	}
+
+	private String getPath(HttpServletRequest request) throws RouteNotSupportedException {
+		try {
+			String[] splitted = request.getPathInfo().split("/");
+			if (splitted.length > 2) {
+				String encoding = StringUtils.defaultString(request.getCharacterEncoding(), UTF8);
+				return URLDecoder.decode(splitted[2], encoding);
+			}
+			return null;
+		} catch (UnsupportedEncodingException exception) {
+			throw new RouteNotSupportedException(exception);
+		}
+	}
+
+}
