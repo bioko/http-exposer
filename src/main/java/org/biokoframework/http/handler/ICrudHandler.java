@@ -25,24 +25,14 @@
  * 
  */
 
-package org.biokoframework.http.rest.exception;
+package org.biokoframework.http.handler;
 
-import java.util.HashMap;
-
-import org.biokoframework.utils.exception.BiokoException;
-
-public class HttpResponseBuilder {
-
-	private HashMap<Class<? extends BiokoException>, HttpError> _exceptionMap;
-
-	public HttpResponseBuilder(HashMap<Class<? extends BiokoException>, HttpError> exceptionMap) {
-		_exceptionMap = exceptionMap;
-	}
-
-	public HttpError buildFrom(BiokoException _exception) {
-		HttpError httpError = _exceptionMap.get(_exception.getClass());
-		httpError.setBody(_exception.getErrors());
-		return httpError;
-	}
+/**
+ * 
+ * @author Mikol Faro <mikol.faro@gmail.com>
+ * @date Feb 16, 2014
+ *
+ */
+public interface ICrudHandler extends IHandler {
 
 }

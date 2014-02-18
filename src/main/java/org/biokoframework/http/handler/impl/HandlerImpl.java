@@ -25,34 +25,39 @@
  * 
  */
 
-package org.biokoframework.http;
+package org.biokoframework.http.handler.impl;
 
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
-import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
-import org.biokoframework.utils.fields.Fields;
+import org.biokoframework.http.handler.IHandler;
+import org.biokoframework.system.command.ICommand;
+import org.biokoframework.system.service.validation.IValidator;
 
-public abstract class FieldsFromRequestBuilder {
+import com.google.inject.Injector;
 
-	public abstract Fields build();
+/**
+ * 
+ * @author Mikol Faro <mikol.faro@gmail.com>
+ * @date Feb 16, 2014
+ *
+ */
+public class HandlerImpl implements IHandler {
+
+	private final Class<? extends ICommand> fCommand;
 	
-	public FieldsFromRequestBuilder setRequest(HttpServletRequest request) {
-		setMethod(request.getMethod());
-		setPathInfo(request.getPathInfo());
-		setHeaderToken(request.getHeader(GenericFieldNames.TOKEN_HEADER));
-		setAuthentication(request.getHeader(GenericFieldNames.BASIC_AUTHENTICATION_HEADER));
-		return this;
+	public HandlerImpl(Class<? extends ICommand> command) {
+		fCommand = command;
 	}
 	
-	public abstract boolean canHandle(HttpServletRequest request);
-	
-	protected abstract FieldsFromRequestBuilder setPathInfo(String pathInfo);
-	protected abstract FieldsFromRequestBuilder setMethod(String method);
-	
-	protected abstract FieldsFromRequestBuilder setHeaderToken(String headerToken);
-	protected abstract FieldsFromRequestBuilder setAuthentication(String authentication);
-	
-	protected String getRequestCharset(HttpServletRequest request) {
-		return request.getCharacterEncoding() == null ? "utf-8" : request.getCharacterEncoding();
+	@Override
+	public ICommand getCommand(Injector injector) {
+		return injector.getInstance(fCommand);
 	}
+
+	@Override
+	public List<IValidator> getValidators() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

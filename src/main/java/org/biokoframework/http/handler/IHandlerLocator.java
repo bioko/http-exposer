@@ -25,41 +25,19 @@
  * 
  */
 
-package org.biokoframework.http.rest.exception;
+package org.biokoframework.http.handler;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.biokoframework.http.routing.IRoute;
+import org.biokoframework.http.routing.UnknownRouteException;
 
-import org.biokoframework.utils.domain.ErrorEntity;
+/**
+ * 
+ * @author Mikol Faro <mikol.faro@gmail.com>
+ * @date Feb 16, 2014
+ *
+ */
+public interface IHandlerLocator {
 
-public class HttpError {
-
-	private int _httpStatus;
-	private List<ErrorEntity> _errorEntities = new ArrayList<ErrorEntity>();
-
-	public HttpError(int httpStatus) {
-		_httpStatus = httpStatus;
-	}
-
-	public HttpError(int httpStatus, List<ErrorEntity> errorEntities) {
-		this(httpStatus);
-		_errorEntities = errorEntities;
-	}
-
-	public int status() {
-		return _httpStatus;
-	}
-
-	public List<ErrorEntity> body() {
-		return _errorEntities;
-	}
-
-	public void setBody(List<ErrorEntity> errors) {				
-		_errorEntities = new ArrayList<ErrorEntity>(errors);
-	}
+	public IHandler getHandler(IRoute route) throws UnknownRouteException;
 	
-	public void setBody(ErrorEntity error) {				
-		_errorEntities.add(error);
-	}
-
 }

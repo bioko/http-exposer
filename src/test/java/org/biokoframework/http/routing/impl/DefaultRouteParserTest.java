@@ -73,14 +73,14 @@ import org.junit.rules.ExpectedException;
  */
 public class DefaultRouteParserTest {
 	
-	private DefaultRouteParser fParser;
+	private HttpRouteParserImpl fParser;
 	
 	@Rule
 	public ExpectedException fExpected = ExpectedException.none();
 
 	@Before
 	public void createParser()  {
-		fParser = new DefaultRouteParser();
+		fParser = new HttpRouteParserImpl();
 	}
 
 	@Test

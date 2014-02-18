@@ -25,15 +25,41 @@
  * 
  */
 
-package org.biokoframework.http.requestbuilder;
+package org.biokoframework.http.handler.impl;
 
-import org.biokoframework.http.multipart.RequestPart;
-import org.biokoframework.utils.fields.Fields;
+import java.util.List;
 
-public interface FieldsFromPartBuilder {
+import org.biokoframework.http.handler.IHandler;
+import org.biokoframework.system.command.ICommand;
+import org.biokoframework.system.command.crud.ICrudCommandFactory;
+import org.biokoframework.system.service.validation.IValidator;
+import org.biokoframework.utils.domain.DomainEntity;
 
-	public Fields build(RequestPart part, String charset);
+import com.google.inject.Injector;
 
-	boolean canHandle(RequestPart part);
+/**
+ * 
+ * @author Mikol Faro <mikol.faro@gmail.com>
+ * @date Feb 16, 2014
+ *
+ */
+public class CrudHandler implements IHandler {
+
+	private final Class<? extends DomainEntity> fEntity;
+
+	public CrudHandler(Class<? extends DomainEntity> entity) {
+		fEntity = entity;
+	}
+	
+	@Override
+	public ICommand getCommand(Injector injector) {
+		return injector.getInstance(ICrudCommandFactory.class).create(fEntity);
+	}
+
+	@Override
+	public List<IValidator> getValidators() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

@@ -25,13 +25,21 @@
  * 
  */
 
-package org.biokoframework.http.requestbuilder;
+package org.biokoframework.http.mock;
 
-public class RequestBuilders {
+import org.biokoframework.system.command.AbstractCommand;
+import org.biokoframework.system.command.CommandException;
+import org.biokoframework.utils.fields.Fields;
 
-	public static final String ONLY_GET_BUILDER = "onlyGetBuilder";
-	public static final String MULTIPART_BUILDER = "multipartBuilder";
-	public static final String REST_BUILDER = "restBuilder";
-	public static final String BINARY_PART_BUILDER = "binaryPartBuilder";
-
+/**
+ * 
+ * @author Mikol Faro <mikol.faro@gmail.com>
+ * @date Feb 16, 2014
+ *
+ */
+public class MockCommand extends AbstractCommand {
+	@Override
+	public Fields execute(Fields input) throws CommandException {
+		return null;
+	}
 }

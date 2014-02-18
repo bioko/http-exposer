@@ -37,7 +37,6 @@ import org.biokoframework.http.routing.IHttpRouteParser;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.RouteNotSupportedException;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
-import org.hsqldb.types.Charset;
 
 /**
  * 
@@ -45,7 +44,7 @@ import org.hsqldb.types.Charset;
  * @date Feb 15, 2014
  *
  */
-public class DefaultRouteParser implements IHttpRouteParser {
+public class HttpRouteParserImpl implements IHttpRouteParser {
 
 	private static final String UTF8 = "utf8";
 

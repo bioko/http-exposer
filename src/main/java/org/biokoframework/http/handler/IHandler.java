@@ -25,20 +25,25 @@
  * 
  */
 
-package org.biokoframework.http.responsebuilder;
+package org.biokoframework.http.handler;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ResponseFromFieldsBuilderFactory {
+import org.biokoframework.system.command.ICommand;
+import org.biokoframework.system.service.validation.IValidator;
 
-	public static List<ResponseFromFieldsBuilder> createResponseBuildersList() {
-		ArrayList<ResponseFromFieldsBuilder> builderList = new ArrayList<ResponseFromFieldsBuilder>();
-		
-		builderList.add(new BinaryResponseBuilder());
-		builderList.add(new JSONResponseBuilder());
+import com.google.inject.Injector;
 
-		return builderList;
-	}
+/**
+ * 
+ * @author Mikol Faro <mikol.faro@gmail.com>
+ * @date Feb 16, 2014
+ *
+ */
+public interface IHandler {
 
+	public ICommand getCommand(Injector injector);
+	
+	public List<IValidator> getValidators();
+	
 }

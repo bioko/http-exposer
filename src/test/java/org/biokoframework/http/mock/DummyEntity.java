@@ -25,36 +25,27 @@
  * 
  */
 
-package org.biokoframework.http.rest;
+package org.biokoframework.http.mock;
 
-import javax.servlet.http.HttpServletResponse;
-
-import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
-import org.biokoframework.system.KILL_ME.commons.GenericFieldValues;
-import org.biokoframework.system.KILL_ME.exception.SystemException;
+import org.biokoframework.utils.domain.DomainEntity;
+import org.biokoframework.utils.domain.annotation.field.Field;
 import org.biokoframework.utils.fields.Fields;
 
-public class RestResponseFromSystemExceptionBuilder {
+/**
+ * 
+ * @author Mikol Faro <mikol.faro@gmail.com>
+ * @date Feb 18, 2014
+ *
+ */
+public class DummyEntity extends DomainEntity {
 
-	private Fields _output;
+	private static final long serialVersionUID = -3014973741817005834L;
+
+	@Field
+	public static final String A_FIELD = "aField";
 	
-	private SystemException _exception;
-
-	public HttpServletResponse build(HttpServletResponse response) {
-		response.setStatus(404);
-		_output.put(GenericFieldNames.RESPONSE, _exception.getErrors());
-		_output.put(GenericFieldNames.RESPONSE_CONTENT_TYPE, GenericFieldValues.JSON_CONTENT_TYPE);
-		return response;
+	public DummyEntity(Fields input) {
+		super(input);
 	}
-
-	public RestResponseFromSystemExceptionBuilder setOutputFields(Fields output) {
-		_output = output;
-		return this;
-	}
-
-	public RestResponseFromSystemExceptionBuilder setException(SystemException exception) {
-		_exception = exception;
-		return this;
-	}
-
+	
 }
