@@ -27,21 +27,24 @@
 
 package org.biokoframework.http.routing;
 
-import org.biokoframework.system.KILL_ME.commons.HttpMethod;
-import org.biokoframework.utils.fields.Fields;
+import org.biokoframework.http.fields.IHttpFieldsParser;
+import org.biokoframework.http.fields.impl.JsonFieldsParser;
+import org.biokoframework.http.routing.impl.HttpRouteParserImpl;
+
+import com.google.inject.AbstractModule;
 
 /**
  * 
  * @author Mikol Faro <mikol.faro@gmail.com>
- * @date Feb 15, 2014
+ * @date Feb 19, 2014
  *
  */
-public interface IRoute {
+public class RouteParserModule extends AbstractModule {
 
-	public HttpMethod getMethod();
-	
-	public String getPath();
+	@Override
+	protected void configure() {
+		bind(IHttpRouteParser.class).to(HttpRouteParserImpl.class);
+		bind(IHttpFieldsParser.class).to(JsonFieldsParser.class);
+	}
 
-	public Fields getFields();
-	
 }

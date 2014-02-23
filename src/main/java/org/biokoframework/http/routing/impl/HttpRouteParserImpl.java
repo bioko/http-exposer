@@ -30,13 +30,18 @@ package org.biokoframework.http.routing.impl;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.biokoframework.http.fields.IHttpFieldsParser;
+import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.routing.IHttpRouteParser;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.RouteNotSupportedException;
+import org.biokoframework.http.routing.impl.RouteImpl;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
+import org.biokoframework.utils.fields.Fields;
 
 /**
  * 
@@ -47,10 +52,28 @@ import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 public class HttpRouteParserImpl implements IHttpRouteParser {
 
 	private static final String UTF8 = "utf8";
-
+	private final IHttpFieldsParser fFieldsParser;
+	
+	@Inject
+	public HttpRouteParserImpl(IHttpFieldsParser fieldsParser) {
+		fFieldsParser = fieldsParser;
+	}
+	
 	@Override
 	public IRoute getRoute(HttpServletRequest request) throws RouteNotSupportedException {
-		return new RouteImpl(getMethod(request), getPath(request));
+		// TODO add parsing of the request
+		return new RouteImpl(getMethod(request), getPath(request), getFields(request));
+	}
+
+	private Fields getFields(HttpServletRequest request) throws RouteNotSupportedException {
+		if (request.getContentLength() > 0) {
+			try {
+				return fFieldsParser.parse(request);
+			} catch (RequestNotSupportedException exception) {
+				throw new RouteNotSupportedException(exception);
+			}
+		}
+		return null;
 	}
 
 	private HttpMethod getMethod(HttpServletRequest request) throws RouteNotSupportedException {
@@ -65,11 +88,11 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 	private String getPath(HttpServletRequest request) throws RouteNotSupportedException {
 		try {
 			String[] splitted = request.getPathInfo().split("/");
-			if (splitted.length > 2) {
+			if (splitted.length > 1) {
 				String encoding = StringUtils.defaultString(request.getCharacterEncoding(), UTF8);
-				return URLDecoder.decode(splitted[2], encoding);
+				return URLDecoder.decode(splitted[1], encoding);
 			}
-			return null;
+			return "";
 		} catch (UnsupportedEncodingException exception) {
 			throw new RouteNotSupportedException(exception);
 		}

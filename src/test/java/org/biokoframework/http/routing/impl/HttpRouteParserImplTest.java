@@ -30,15 +30,16 @@ package org.biokoframework.http.routing.impl;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.Matchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.mock.MockRequest;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.RouteNotSupportedException;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
+import org.biokoframework.utils.fields.Fields;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -53,25 +54,28 @@ import org.junit.rules.ExpectedException;
 public class HttpRouteParserImplTest {
 	
 	private HttpRouteParserImpl fParser;
+	private MockFieldsParser fMockFieldsParser;
 	
 	@Rule
 	public ExpectedException fExpected = ExpectedException.none();
 
+
 	@Before
 	public void createParser()  {
-		fParser = new HttpRouteParserImpl();
+		fMockFieldsParser = new MockFieldsParser();
+		fParser = new HttpRouteParserImpl(fMockFieldsParser);
 	}
 
 	@Test
 	public void parseSimple() throws Exception {
-		HttpServletRequest request = new MockRequest(HttpMethod.GET.toString(), "/1.0/path");
+		HttpServletRequest request = new MockRequest(HttpMethod.GET.toString(), "/path");
 		
 		IRoute route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
 		assertThat(route.getPath(), is(equalTo("path")));
 		
-		request = new MockRequest(HttpMethod.GET.toString(), "/1.0/path/");
+		request = new MockRequest(HttpMethod.GET.toString(), "/path/");
 		
 		route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
@@ -82,44 +86,65 @@ public class HttpRouteParserImplTest {
 	@Test
 	public void parseRoot() throws Exception {
 		
-		HttpServletRequest request = new MockRequest(HttpMethod.POST.toString(), "/1.0");
+		HttpServletRequest request = new MockRequest(HttpMethod.POST.toString(), "/");
 		
 		IRoute route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.POST)));
-		assertThat(route.getPath(), is(nullValue()));
+		assertThat(route.getPath(), is(equalTo("")));
 		
-		request = new MockRequest(HttpMethod.POST.toString(), "/1.0/");
-		
-		route = fParser.getRoute(request);
-		assertThat(route, is(notNullValue()));
-		assertThat(route.getMethod(), is(equalTo(HttpMethod.POST)));
-		assertThat(route.getPath(), is(nullValue()));
 	}
 	
 	@Test
 	public void parseUnsupported() throws Exception {
 		fExpected.expect(RouteNotSupportedException.class);
 		
-		HttpServletRequest request = new MockRequest("UNSUPPORTED", "/1.0/unsupported");
+		HttpServletRequest request = new MockRequest("UNSUPPORTED", "unsupported");
 		
 		fParser.getRoute(request);
 	}
 	
 	@Test
 	public void parseEscaped() throws Exception {
-		HttpServletRequest request = new MockRequest(HttpMethod.PUT.toString(), "/1.0/some%2Fthing");
+		HttpServletRequest request = new MockRequest(HttpMethod.PUT.toString(), "/some%2Fthing");
 		
 		IRoute route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.PUT)));
 		assertThat(route.getPath(), is(equalTo("some/thing")));
 		
-		request = new MockRequest(HttpMethod.PUT.toString(), "/1.0/some%2Fthing/");
+		request = new MockRequest(HttpMethod.PUT.toString(), "/some%2Fthing/");
 		
 		route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.PUT)));
 		assertThat(route.getPath(), is(equalTo("some/thing")));
+	}
+	
+	@Test
+	public void parseWithFields() throws Exception {
+		HttpServletRequest request = new MockRequest(HttpMethod.PUT.toString(), "/withField", "{ }");
+		
+		IRoute route = fParser.getRoute(request);
+		assertThat(route, is(notNullValue()));
+		assertThat(route.getMethod(), is(equalTo(HttpMethod.PUT)));
+		assertThat(route.getPath(), is(equalTo("withField")));
+		assertThat(fMockFieldsParser.wasCalledParse(), is(true));
+	}
+	
+	private static final class MockFieldsParser implements IHttpFieldsParser {
+
+		private boolean fWasCalledParse = false;
+		
+		@Override
+		public Fields parse(HttpServletRequest request) {
+			fWasCalledParse = true;
+			return null;
+		}
+		
+		public boolean wasCalledParse() {
+			return fWasCalledParse;
+		}
+		
 	}
 }

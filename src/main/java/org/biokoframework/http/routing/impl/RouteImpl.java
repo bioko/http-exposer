@@ -29,6 +29,7 @@ package org.biokoframework.http.routing.impl;
 
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
+import org.biokoframework.utils.fields.Fields;
 
 /**
  * 
@@ -40,10 +41,12 @@ public class RouteImpl implements IRoute {
 
 	private final HttpMethod fHttpMethod;
 	private final String fPath;
+	private final Fields fFields;
 
-	public RouteImpl(HttpMethod httpMethod, String path) {
+	public RouteImpl(HttpMethod httpMethod, String path, Fields fields) {
 		fHttpMethod = httpMethod;
 		fPath = path;
+		fFields = fields;
 	}
 	
 	@Override
@@ -54,6 +57,11 @@ public class RouteImpl implements IRoute {
 	@Override
 	public String getPath() {
 		return fPath;
+	}
+	
+	@Override
+	public Fields getFields() {
+		return fFields;
 	}
 
 }
