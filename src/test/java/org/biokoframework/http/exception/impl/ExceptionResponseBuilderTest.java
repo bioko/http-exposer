@@ -73,11 +73,11 @@ public class ExceptionResponseBuilderTest {
 
 	}
 
-	private Map<Class<? extends Exception>, Integer> fCodesMap;
+	private Map<Class<? extends BiokoException>, Integer> fCodesMap;
 
 	@Before
 	public void prepareMap() {
-		fCodesMap = new HashMap<Class<? extends Exception>, Integer>();
+		fCodesMap = new HashMap<Class<? extends BiokoException>, Integer>();
 		fCodesMap.put(MockException.class, 626);
 		fCodesMap.put(CommandException.class, 747);
 	}
@@ -85,7 +85,7 @@ public class ExceptionResponseBuilderTest {
 	@Test
 	public void testBiokoExceptionWithErrorEntity() throws Exception {
 		
-		ExceptionResponseBuilder builder = new ExceptionResponseBuilder(fCodesMap);
+		ExceptionResponseBuilderImpl builder = new ExceptionResponseBuilderImpl(fCodesMap);
 		
 		MockResponse mockResponse = new MockResponse();
 		MockException mockException = new MockException(new ErrorEntity(new Fields(
@@ -102,7 +102,7 @@ public class ExceptionResponseBuilderTest {
 	
 	@Test
 	public void testNestedBiokoException() throws IOException {
-		ExceptionResponseBuilder builder = new ExceptionResponseBuilder(fCodesMap);
+		ExceptionResponseBuilderImpl builder = new ExceptionResponseBuilderImpl(fCodesMap);
 		
 		MockResponse mockResponse = new MockResponse();
 		MockException mockException = new MockException(new CommandException(new ErrorEntity(new Fields(
@@ -121,7 +121,7 @@ public class ExceptionResponseBuilderTest {
 	
 	@Test
 	public void testNonBiokoException() throws IOException {
-		ExceptionResponseBuilder builder = new ExceptionResponseBuilder(fCodesMap);
+		ExceptionResponseBuilderImpl builder = new ExceptionResponseBuilderImpl(fCodesMap);
 		
 		MockResponse mockResponse = new MockResponse();
 		MockException mockException = new MockException(new UnsupportedOperationException("Something"));

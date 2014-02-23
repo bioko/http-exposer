@@ -34,12 +34,15 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
+import org.apache.log4j.Logger;
 import org.biokoframework.http.exception.IExceptionResponseBuilder;
 import org.biokoframework.utils.domain.ErrorEntity;
 import org.biokoframework.utils.exception.BiokoException;
@@ -47,34 +50,35 @@ import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;
 import org.json.simple.JSONValue;
 
-import com.google.inject.Inject;
-
 /**
  * 
  * @author Mikol Faro <mikol.faro@gmail.com>
  * @date Feb 18, 2014
  *
  */
-public class ExceptionResponseBuilder implements IExceptionResponseBuilder {
+public class ExceptionResponseBuilderImpl implements IExceptionResponseBuilder {
 
-	private final Map<Class<? extends Exception>, Integer> fStatusCodesMap;
+	private final Map<Class<? extends BiokoException>, Integer> fStatusCodesMap;
 	
 	@Inject
-	public ExceptionResponseBuilder(Map<Class<? extends Exception>, Integer> statusCodesMap) {
+	public ExceptionResponseBuilderImpl(@Named("statusCodeMap") Map<Class<? extends BiokoException>, Integer> statusCodesMap) {
 		fStatusCodesMap = Collections.unmodifiableMap(statusCodesMap);
 	}
 	
 	@Override
 	public HttpServletResponse build(HttpServletResponse response, Exception exception, Fields input, Fields output) throws IOException {	
 		response.setContentType(ContentType.APPLICATION_JSON.toString());
+		
+		Logger.getRootLogger().info("Before choosing");
 		response.setStatus(chooseStatusCode(exception));
+		Logger.getRootLogger().info("After choosing");
 		
 		List<ErrorEntity> errors = null;
 		if (exception instanceof BiokoException) {
 			errors = ((BiokoException) exception).getErrors();
 		}
 		
-		if (errors.isEmpty()) {
+		if (errors == null ||errors.isEmpty()) {
 			errors = new ArrayList<>();
 			StringBuilder message = new StringBuilder()
 				.append("An unexpected exception as been captured ").append(descriptionOf(exception));
@@ -101,12 +105,15 @@ public class ExceptionResponseBuilder implements IExceptionResponseBuilder {
 		return message.toString();
 	}
 
-	private int chooseStatusCode(Exception exception) {
-		while (exception != null && exception instanceof BiokoException) {
-			Integer code = fStatusCodesMap.get(exception.getClass());
-			if (code != null) {
-				return code;
+	private int chooseStatusCode(Throwable cause) {
+		while (cause != null && cause != cause.getCause()) {
+			if (cause instanceof BiokoException) { 
+				Integer code = fStatusCodesMap.get(cause.getClass());
+				if (code != null) {
+					return code;
+				}
 			}
+			cause = cause.getCause();
 		}
 		return HttpStatus.SC_INTERNAL_SERVER_ERROR;
 	}
