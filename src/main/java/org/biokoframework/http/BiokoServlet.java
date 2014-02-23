@@ -29,10 +29,6 @@ package org.biokoframework.http;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -42,22 +38,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.input.AutoCloseInputStream;
+import org.apache.log4j.Logger;
 import org.apache.log4j.PropertyConfigurator;
-import org.biokoframework.http.requestbuilder.FieldsFromRequestBuilderFactory;
-import org.biokoframework.http.responsebuilder.JSONResponseBuilder;
-import org.biokoframework.http.responsebuilder.ResponseFromFieldsBuilder;
-import org.biokoframework.http.responsebuilder.ResponseFromFieldsBuilderFactory;
-import org.biokoframework.http.rest.FieldsFromRestRequestBuilder;
-import org.biokoframework.http.rest.RestResponseFromCommandExceptionBuilder;
-import org.biokoframework.http.rest.RestResponseFromSystemExceptionBuilder;
-import org.biokoframework.system.ConfigurationEnum;
+import org.biokoframework.http.exception.IExceptionResponseBuilder;
+import org.biokoframework.http.handler.IHandler;
+import org.biokoframework.http.handler.IHandlerLocator;
+import org.biokoframework.http.routing.IHttpRouteParser;
+import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.system.KILL_ME.SystemNames;
-import org.biokoframework.system.KILL_ME.XSystem;
-import org.biokoframework.system.KILL_ME.XSystemIdentityCard;
-import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
-import org.biokoframework.system.KILL_ME.exception.SystemException;
-import org.biokoframework.utils.exception.BiokoException;
 import org.biokoframework.utils.fields.Fields;
 
 import com.google.inject.Injector;
@@ -69,36 +58,33 @@ public class BiokoServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -2990444858272343398L;
 
-	private XServerSingleton _xServerSingleton;
-	private String _systemName;
-	private String _systemVersion;
-	private String _systemConfig;
+	private IHandlerLocator fLocator;
+	private IHttpRouteParser fRequestParser;
+	private Injector fInjector;
+	private IExceptionResponseBuilder fExceptionResponseBuilder;
+	
+	private String fSystemName;
+	private String fSystemVersion;
+	private String fSystemConfig;
 
-	private Map<String, FieldsFromRequestBuilder> _requestBuilders = FieldsFromRequestBuilderFactory.createRequestBuildersList();
-	private List<ResponseFromFieldsBuilder> _responseBuilders = ResponseFromFieldsBuilderFactory.createResponseBuildersList();
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		
-		_systemName = SystemNames.SYSTEM_A;
-		_systemVersion = "1.0";
-		_systemConfig = "DEV";
+		fSystemName = SystemNames.SYSTEM_A;
+		fSystemVersion = "1.0";
+		fSystemConfig = "DEV";
 
-		Injector injector = (Injector) config.getServletContext().getAttribute(Injector.class.getName());
-		_xServerSingleton = injector.getInstance(XServerSingleton.class);
+		fInjector = (Injector) config.getServletContext().getAttribute(Injector.class.getName());
+		fRequestParser = fInjector.getInstance(IHttpRouteParser.class);
+		fLocator = fInjector.getInstance(IHandlerLocator.class);
+		fExceptionResponseBuilder = fInjector.getInstance(IExceptionResponseBuilder.class);
 		
-		try {
-			XSystemIdentityCard xSystemIdentityCard = new XSystemIdentityCard(_systemName, _systemVersion, ConfigurationEnum.valueOf(_systemConfig));
-			_xServerSingleton.getSystem(xSystemIdentityCard, Loggers.engagedServer);
-		} catch (SystemException exception) {
-			throw new ServletException("Error creating system", exception);
-		}
+		Loggers.engagedInterface.info("System-Config: " + fSystemName + " " + fSystemVersion + " " + fSystemConfig);
+		System.out.println("System-Config: " + fSystemName + " " + fSystemVersion + " " + fSystemConfig);
 
-		Loggers.engagedInterface.info("System-Config: " + _systemName + " " + _systemVersion + " " + _systemConfig);
-		System.out.println("System-Config: " + _systemName + " " + _systemVersion + " " + _systemConfig);
-
-		loadLogProperties(_systemName);
+		loadLogProperties(fSystemName);
 
 	}
 
@@ -111,7 +97,6 @@ public class BiokoServlet extends HttpServlet {
 	public void destroy() {
 		Loggers.engagedInterface.info("Bioko servlet is going down");
 		Loggers.engagedInterface.info("Adios!");
-		_xServerSingleton.shutdown();
 		super.destroy();
 	}
 
@@ -123,73 +108,28 @@ public class BiokoServlet extends HttpServlet {
 		Loggers.engagedInterface.debug(requestWrapper.report());
 		Loggers.engagedInterface.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		
-		
+		Fields input = null;
+		Fields output = null;
 		
 		try {
-
-			Fields input = buildFieldsFromRequest(requestWrapper);
-
 			String pathTranslated = requestWrapper.getPathTranslated();
 			Loggers.engagedInterface.info("pathTranslated: " + pathTranslated);
 
-			Fields output = new Fields();
+			IRoute route = fRequestParser.getRoute(requestWrapper);
+			input = route.getFields();
 
-			XSystemIdentityCard xSystemIdentityCard = new XSystemIdentityCard(_systemName, _systemVersion, ConfigurationEnum.valueOf(_systemConfig));
-			try {
-				_xServerSingleton.getSystem(xSystemIdentityCard, Loggers.engagedServer);
-				XSystem serverInstance = _xServerSingleton.getSystem(xSystemIdentityCard, Loggers.engagedServer);
-				try {
+			Logger.getRootLogger().info("Before getHandler");
+			IHandler handler = fLocator.getHandler(route);
+			Logger.getRootLogger().info("Before afterHandler");
+			
+			Logger.getRootLogger().info("Before execute");
+			output = handler.getCommand(fInjector).execute(input);
+			Logger.getRootLogger().info("After execute");
 
-					output = serverInstance.execute(input);
-
-				} catch (BiokoException exception) {
-					response = new RestResponseFromCommandExceptionBuilder()
-					.setInputFields(input)
-					.setOutputFields(output)
-					.setException(exception)
-					.build(response);
-				}
-			} catch (SystemException exception) {
-				response = new RestResponseFromSystemExceptionBuilder()
-						.setOutputFields(output)
-						.setException(exception)
-						.build(response);
-			}
-
-			String responseType = output.get(GenericFieldNames.RESPONSE_CONTENT_TYPE);
-			if (responseType == null || responseType.isEmpty()) {
-				responseType = input.get(GenericFieldNames.RESPONSE_CONTENT_TYPE);
-			}
-
-			ResponseFromFieldsBuilder responseBuilder = new JSONResponseBuilder();
-			for (ResponseFromFieldsBuilder aBuilder : _responseBuilders) {
-				if (aBuilder.canHandle(responseType)) {
-					responseBuilder = aBuilder;
-					break;
-				}
-			}
-			responseBuilder.
-			setInput(input).
-			setOutput(output).
-			build(response);
-		} catch (Exception e) {
-			StringWriter writer = new StringWriter();
-			writer.append(Arrays.toString(e.getStackTrace()).replace(" ", "\n"));
-			Loggers.engagedInterface.error(writer);
+		} catch (Exception exception) {
+			Logger.getRootLogger().error("Exception", exception);
+			response = fExceptionResponseBuilder.build(response, exception, input, output);
 		}
-	}
-
-	private Fields buildFieldsFromRequest(HttpServletRequest request) {
-		FieldsFromRequestBuilder requestBuilder = new FieldsFromRestRequestBuilder();
-		for (FieldsFromRequestBuilder aBuilder : _requestBuilders.values()) {
-			if (aBuilder.canHandle(request)) {
-				requestBuilder = aBuilder;
-				break;
-			}
-		}
-
-		Fields input = requestBuilder.setRequest(request).build();
-		return input;
 	}
 
 	private void loadLogProperties(String systemName) {

@@ -35,7 +35,7 @@ import java.io.Writer;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.entity.ContentType;
+import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.utils.fields.Fields;
 
@@ -47,7 +47,8 @@ import org.biokoframework.utils.fields.Fields;
  */
 public class JsonFieldsParser extends AbstractFieldsParser {
 
-	private static final String APPLICATION_JSON = ContentType.APPLICATION_JSON.toString();
+	private static final String JSON_TYPE = "application/json";
+	private static final String JSON_EXTENSION = "json";
 
 	@Override
 	public Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {		
@@ -65,9 +66,9 @@ public class JsonFieldsParser extends AbstractFieldsParser {
 	}
 
 	@Override
-	protected void checkContentType(String contentType) throws RequestNotSupportedException {
-		if (!APPLICATION_JSON.equals(contentType)) {
-			throw badContentType(contentType, APPLICATION_JSON);
+	protected void checkContentType(String contentType, String extension) throws RequestNotSupportedException {
+		if (!StringUtils.startsWith(contentType, JSON_TYPE) && !StringUtils.equals(extension, JSON_EXTENSION)) {
+			throw badContentType(contentType, JSON_TYPE);
 		}
 	}
 

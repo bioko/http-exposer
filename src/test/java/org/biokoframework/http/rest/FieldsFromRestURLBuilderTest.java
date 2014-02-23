@@ -27,53 +27,43 @@
 
 package org.biokoframework.http.rest;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-
-import java.util.HashMap;
-
-import org.biokoframework.utils.domain.DomainEntity;
-import org.biokoframework.utils.fields.FieldNames;
-import org.biokoframework.utils.fields.Fields;
-import org.junit.Test;
 
 public class FieldsFromRestURLBuilderTest {
 
-	@Test
-	public void retrieveFiledName() throws IllegalArgumentException, IllegalAccessException {
-		String actual = new FieldsFromRestRequestBuilder().retrieveFieldName("contact".toUpperCase(), "id".toUpperCase());
-		assertThat(actual, equalTo("contactId"));
-	}
-	
-	@Test
-	public void contactGet() {
-		Fields expected = new Fields(FieldNames.COMMAND_NAME, "GET_contact");
-		expected.put(DomainEntity.ID, "1");
-		
-		FieldsFromRestRequestBuilder fieldsBuilder = new FieldsFromRestRequestBuilder();
-		fieldsBuilder.setPathInfo("/contact/1");
-		fieldsBuilder.setMethod("GET");
-		fieldsBuilder.setBody("");
-		fieldsBuilder.setParameters(new HashMap<String, String[]>());
-		Fields actual = fieldsBuilder.build();
-		
-		assertThat(actual, equalTo(expected));
-	}
-	
-	@Test
-	public void contactPost() {
-		Fields expected = new Fields(FieldNames.COMMAND_NAME, "POST_contact");
-		
-		FieldsFromRestRequestBuilder fieldsBuilder = new FieldsFromRestRequestBuilder();
-		fieldsBuilder.setPathInfo("/contact/");
-		fieldsBuilder.setMethod("POST");
-		fieldsBuilder.setBody("");
-		Fields actual = fieldsBuilder.build();
-		
-		assertThat(actual.keys(), is(equalTo(expected.keys())));
-		for (String aKey : expected.keys()) {
-			assertThat(actual.get(aKey), is(equalTo(expected.get(aKey))));
-		}
-	}
+//	@Test
+//	public void retrieveFiledName() throws IllegalArgumentException, IllegalAccessException {
+//		String actual = new FieldsFromRestRequestBuilder().retrieveFieldName("contact".toUpperCase(), "id".toUpperCase());
+//		assertThat(actual, equalTo("contactId"));
+//	}
+//	
+//	@Test
+//	public void contactGet() {
+//		Fields expected = new Fields(FieldNames.COMMAND_NAME, "GET_contact");
+//		expected.put(DomainEntity.ID, "1");
+//		
+//		FieldsFromRestRequestBuilder fieldsBuilder = new FieldsFromRestRequestBuilder();
+//		fieldsBuilder.setPathInfo("/contact/1");
+//		fieldsBuilder.setMethod("GET");
+//		fieldsBuilder.setBody("");
+//		fieldsBuilder.setParameters(new HashMap<String, String[]>());
+//		Fields actual = fieldsBuilder.build();
+//		
+//		assertThat(actual, equalTo(expected));
+//	}
+//	
+//	@Test
+//	public void contactPost() {
+//		Fields expected = new Fields(FieldNames.COMMAND_NAME, "POST_contact");
+//		
+//		FieldsFromRestRequestBuilder fieldsBuilder = new FieldsFromRestRequestBuilder();
+//		fieldsBuilder.setPathInfo("/contact/");
+//		fieldsBuilder.setMethod("POST");
+//		fieldsBuilder.setBody("");
+//		Fields actual = fieldsBuilder.build();
+//		
+//		assertThat(actual.keys(), is(equalTo(expected.keys())));
+//		for (String aKey : expected.keys()) {
+//			assertThat(actual.get(aKey), is(equalTo(expected.get(aKey))));
+//		}
+//	}
 }

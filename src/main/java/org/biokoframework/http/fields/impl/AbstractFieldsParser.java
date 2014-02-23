@@ -27,6 +27,9 @@
 
 package org.biokoframework.http.fields.impl;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.biokoframework.http.fields.IHttpFieldsParser;
@@ -43,17 +46,34 @@ import org.biokoframework.utils.fields.Fields;
  */
 public abstract class AbstractFieldsParser implements IHttpFieldsParser {
 	
+	private final Pattern fExtensionPattern = Pattern.compile("\\.([a-zA-Z0-9]+)$");
+	
 	@Override
 	public final Fields parse(HttpServletRequest request) throws RequestNotSupportedException {
-		checkContentType(request.getContentType());
+		checkContentType(request.getContentType(), getRequestExtension(request.getPathInfo()));
 		
 		return safelyParse(request);
 	}
 
 	protected abstract Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException;
 
-	protected abstract void checkContentType(String contentType) throws RequestNotSupportedException;
+	/**
+	 * Check if the parser can handle the request content
+	 * 
+	 * @param contentType The content type as in the request
+	 * @param extension If the path as an extension such as {@code http://example.com/path.ext} than {@code ext} will be passed, or empty string
+	 * 
+	 * @throws RequestNotSupportedException If it cannot
+	 */
+	protected abstract void checkContentType(String contentType, String extension) throws RequestNotSupportedException;
 
+	protected String getRequestExtension(String pathInfo) {
+		Matcher matcher = fExtensionPattern.matcher(pathInfo);
+		if (matcher.find()) {
+			return matcher.group(1);
+		}
+		return null;
+	}
 
 	protected RequestNotSupportedException badContentType(String foundContentType, String expectedContentType) {
 		String message = new StringBuilder()

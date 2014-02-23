@@ -114,10 +114,7 @@ public class MockRequest implements HttpServletRequest {
 	
 	@Override
 	public String getContentType() {
-		if (fType != null) {
-			return fType;
-		}
-		throw new UnsupportedOperationException();
+		return fType;
 	}
 	
 	private static final class MOCSIS extends ServletInputStream {
