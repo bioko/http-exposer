@@ -28,6 +28,7 @@
 package org.biokoframework.http.mock;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
@@ -38,6 +39,7 @@ import java.util.Map;
 
 import javax.servlet.AsyncContext;
 import javax.servlet.DispatcherType;
+import javax.servlet.ReadListener;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -61,10 +63,91 @@ public class MockRequest implements HttpServletRequest {
 
 	private final String fMethod;
 	private final String fPath;
-
+	private final String fContent;
+	private String fType;
+	
 	public MockRequest(String method, String path) {
+		this(method, path, "");
+	}
+	
+	public MockRequest(String method, String path, String content) {
 		fMethod = method;
 		fPath = path;
+		fContent = content;
+	}
+	
+	@Override
+	public String getCharacterEncoding() {
+		return null;
+	}
+	
+	@Override
+	public int getContentLength() {
+		return fContent.length();
+	}
+
+	@Override
+	public ServletInputStream getInputStream() throws IOException {
+		return new MOCSIS(fContent.getBytes());
+	}
+	
+
+	@Override
+	public String getMethod() {
+		if (fMethod != null) {
+			return fMethod;
+		}
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getPathInfo() {
+		if (fPath != null) {
+			return fPath;
+		}
+		throw new UnsupportedOperationException();
+	}
+	
+	public void setContentType(String type) {
+		fType = type;
+	}
+	
+	@Override
+	public String getContentType() {
+		if (fType != null) {
+			return fType;
+		}
+		throw new UnsupportedOperationException();
+	}
+	
+	private static final class MOCSIS extends ServletInputStream {
+
+		private ByteArrayInputStream fIS;
+
+		public MOCSIS(byte[] bytes) {
+			fIS = new ByteArrayInputStream(bytes);
+		}
+
+		@Override
+		public boolean isFinished() {
+			return fIS.available() > 0;
+		}
+
+		@Override
+		public boolean isReady() {
+			return true;
+		}
+
+		@Override
+		public void setReadListener(ReadListener readListener) {
+		}
+
+		@Override
+		public int read() throws IOException {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
 	}
 
 	@Override
@@ -78,32 +161,12 @@ public class MockRequest implements HttpServletRequest {
 	}
 
 	@Override
-	public String getCharacterEncoding() {
-		return null;
-	}
-
-	@Override
 	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public int getContentLength() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public long getContentLengthLong() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getContentType() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public ServletInputStream getInputStream() throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -284,22 +347,6 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public int getIntHeader(String name) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getMethod() {
-		if (fMethod != null) {
-			return fMethod;
-		}
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getPathInfo() {
-		if (fPath != null) {
-			return fPath;
-		}
 		throw new UnsupportedOperationException();
 	}
 
