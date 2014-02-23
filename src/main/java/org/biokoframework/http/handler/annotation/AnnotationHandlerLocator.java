@@ -41,6 +41,8 @@ import org.biokoframework.system.command.annotation.Command;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
 import org.biokoframework.system.command.crud.binary.annotation.BlobCrudCommand;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 /**
  * 
  * @author Mikol Faro <mikol.faro@gmail.com>
@@ -51,7 +53,8 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 
 	private final Class<?> fCommandsClass;
 
-	public AnnotationHandlerLocator(Class<?> commandsClass) {
+	@Inject
+	public AnnotationHandlerLocator(@Named("Commands") Class<?> commandsClass) {
 		fCommandsClass = commandsClass;
 		
 		for (Field aCandidateCommand : fCommandsClass.getFields()) {

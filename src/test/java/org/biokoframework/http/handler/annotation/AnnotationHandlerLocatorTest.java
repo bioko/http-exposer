@@ -67,13 +67,13 @@ public class AnnotationHandlerLocatorTest {
 		AnnotationHandlerLocator fLocator = new AnnotationHandlerLocator(Simple.class);
 		
 		// Test first command
-		IRoute getRoute = new RouteImpl(HttpMethod.GET, Simple.SIMPLE_GET_COMMAND);
+		IRoute getRoute = new RouteImpl(HttpMethod.GET, Simple.SIMPLE_GET_COMMAND, null);
 		IHandler handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
 		assertThat(handler.getCommand(fInjector), is(instanceOf(MockCommand.class)));
 		
 		// Test second command
-		IRoute postRoute = new RouteImpl(HttpMethod.POST, Simple.SIMPLE_POST_COMMAND);
+		IRoute postRoute = new RouteImpl(HttpMethod.POST, Simple.SIMPLE_POST_COMMAND, null);
 		handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
 		assertThat(handler.getCommand(fInjector), is(instanceOf(MockCommand.class)));
@@ -85,25 +85,25 @@ public class AnnotationHandlerLocatorTest {
 		AnnotationHandlerLocator fLocator = new AnnotationHandlerLocator(Crud.class);
 		
 		// POST Test
-		IRoute postRoute = new RouteImpl(HttpMethod.POST, Crud.DUMMY_CRUD);
+		IRoute postRoute = new RouteImpl(HttpMethod.POST, Crud.DUMMY_CRUD, null);
 		IHandler handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
 		assertThat(handler.getCommand(fInjector), is(instanceOf(org.biokoframework.system.command.crud.CrudCommand.class)));
 				
 		// GET Test
-		IRoute getRoute = new RouteImpl(HttpMethod.GET, Crud.DUMMY_CRUD);
+		IRoute getRoute = new RouteImpl(HttpMethod.GET, Crud.DUMMY_CRUD, null);
 		handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
 		assertThat(handler.getCommand(fInjector), is(instanceOf(org.biokoframework.system.command.crud.CrudCommand.class)));
 		
 		// PUT Test
-		IRoute putRoute = new RouteImpl(HttpMethod.PUT, Crud.DUMMY_CRUD);
+		IRoute putRoute = new RouteImpl(HttpMethod.PUT, Crud.DUMMY_CRUD, null);
 		handler = fLocator.getHandler(putRoute);
 		assertThat(handler, is(notNullValue()));
 		assertThat(handler.getCommand(fInjector), is(instanceOf(org.biokoframework.system.command.crud.CrudCommand.class)));
 		
 		// PUT Test
-		IRoute deleteRoute = new RouteImpl(HttpMethod.DELETE, Crud.DUMMY_CRUD);
+		IRoute deleteRoute = new RouteImpl(HttpMethod.DELETE, Crud.DUMMY_CRUD, null);
 		handler = fLocator.getHandler(deleteRoute);
 		assertThat(handler, is(notNullValue()));
 		assertThat(handler.getCommand(fInjector), is(instanceOf(org.biokoframework.system.command.crud.CrudCommand.class)));
