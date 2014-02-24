@@ -42,8 +42,8 @@ import com.google.inject.Injector;
  */
 public interface IHandler {
 
-	public ICommand getCommand(Injector injector);
+	ICommand getCommand(Injector injector);
 	
-	public List<IValidator> getValidators();
+	List<IValidator> getValidators();
 	
 }

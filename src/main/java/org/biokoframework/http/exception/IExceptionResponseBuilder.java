@@ -41,6 +41,6 @@ import org.biokoframework.utils.fields.Fields;
  */
 public interface IExceptionResponseBuilder {
 
-	public HttpServletResponse build(HttpServletResponse response, Exception exception, Fields input, Fields output) throws IOException;
+	HttpServletResponse build(HttpServletResponse response, Exception exception, Fields input, Fields output) throws IOException;
 	
 }

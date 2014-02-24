@@ -38,10 +38,10 @@ import org.biokoframework.utils.fields.Fields;
  */
 public interface IRoute {
 
-	public HttpMethod getMethod();
+	HttpMethod getMethod();
 	
-	public String getPath();
+	String getPath();
 
-	public Fields getFields();
+	Fields getFields();
 	
 }

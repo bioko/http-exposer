@@ -37,6 +37,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface IHttpRouteParser {
 
-	public IRoute getRoute(HttpServletRequest request) throws RouteNotSupportedException;
+	IRoute getRoute(HttpServletRequest request) throws RouteNotSupportedException;
 	
 }

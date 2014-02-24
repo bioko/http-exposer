@@ -38,6 +38,6 @@ import org.biokoframework.http.routing.UnknownRouteException;
  */
 public interface IHandlerLocator {
 
-	public IHandler getHandler(IRoute route) throws UnknownRouteException;
+	IHandler getHandler(IRoute route) throws UnknownRouteException;
 	
 }
