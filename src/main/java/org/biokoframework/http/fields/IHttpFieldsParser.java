@@ -39,6 +39,6 @@ import org.biokoframework.utils.fields.Fields;
  */
 public interface IHttpFieldsParser {
 
-	public Fields parse(HttpServletRequest request) throws RequestNotSupportedException;
+	Fields parse(HttpServletRequest request) throws RequestNotSupportedException;
 
 }

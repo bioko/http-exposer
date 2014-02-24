@@ -27,10 +27,13 @@
 
 package org.biokoframework.http;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
@@ -62,6 +65,10 @@ public class RequestWrapper extends HttpServletRequestWrapper {
 		
 	}
 
+	@Override
+	public BufferedReader getReader() throws IOException {
+		return new BufferedReader(new InputStreamReader(getInputStream(), getCharacterEncoding()));
+	}
 
 	@Override  
 	public ServletInputStream getInputStream () throws IOException {          

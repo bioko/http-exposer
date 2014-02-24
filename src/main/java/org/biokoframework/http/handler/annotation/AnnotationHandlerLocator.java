@@ -29,20 +29,24 @@ package org.biokoframework.http.handler.annotation;
 
 import java.lang.reflect.Field;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.http.handler.impl.AbstractHandlerLocator;
-import org.biokoframework.http.handler.impl.CrudHandler;
+import org.biokoframework.http.handler.impl.GenericHandler;
 import org.biokoframework.http.handler.impl.HandlerImpl;
 import org.biokoframework.http.routing.IRouteMatcher;
 import org.biokoframework.http.routing.impl.RouteMatcherImpl;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.system.command.ICommand;
 import org.biokoframework.system.command.annotation.Command;
+import org.biokoframework.system.command.crud.CreateEntityCommand;
+import org.biokoframework.system.command.crud.DeleteEntityCommand;
+import org.biokoframework.system.command.crud.RetrieveEntityCommand;
+import org.biokoframework.system.command.crud.UpdateEntityCommand;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
 import org.biokoframework.system.command.crud.binary.annotation.BlobCrudCommand;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 /**
  * 
  * @author Mikol Faro <mikol.faro@gmail.com>
@@ -93,22 +97,22 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 			CrudCommand annotation = aCandidateCommand.getAnnotation(CrudCommand.class);
 			if (annotation.create()) {
 				IRouteMatcher matcher = createRouteMatcher(HttpMethod.POST, (String) aCandidateCommand.get(null));
-				IHandler handler = new CrudHandler(annotation.entity());
+				IHandler handler = new GenericHandler(annotation.entity(), CreateEntityCommand.class);
 				addRoute(matcher, handler);
 			}
 			if (annotation.read()) {
 				IRouteMatcher matcher = createRouteMatcher(HttpMethod.GET, (String) aCandidateCommand.get(null));
-				IHandler handler = new CrudHandler(annotation.entity());
+				IHandler handler = new GenericHandler(annotation.entity(), RetrieveEntityCommand.class);
 				addRoute(matcher, handler);
 			}
 			if (annotation.update()) {
 				IRouteMatcher matcher = createRouteMatcher(HttpMethod.PUT, (String) aCandidateCommand.get(null));
-				IHandler handler = new CrudHandler(annotation.entity());
+				IHandler handler = new GenericHandler(annotation.entity(), UpdateEntityCommand.class);
 				addRoute(matcher, handler);
 			}
 			if (annotation.delete()) {
 				IRouteMatcher matcher = createRouteMatcher(HttpMethod.DELETE, (String) aCandidateCommand.get(null));
-				IHandler handler = new CrudHandler(annotation.entity());
+				IHandler handler = new GenericHandler(annotation.entity(), DeleteEntityCommand.class);
 				addRoute(matcher, handler);
 			}
 		} catch (IllegalAccessException exception) {

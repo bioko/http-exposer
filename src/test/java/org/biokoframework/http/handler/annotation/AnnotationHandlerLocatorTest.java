@@ -39,7 +39,10 @@ import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.impl.RouteImpl;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.system.command.annotation.Command;
-import org.biokoframework.system.command.crud.ICrudCommandFactory;
+import org.biokoframework.system.command.crud.CreateEntityCommand;
+import org.biokoframework.system.command.crud.DeleteEntityCommand;
+import org.biokoframework.system.command.crud.RetrieveEntityCommand;
+import org.biokoframework.system.command.crud.UpdateEntityCommand;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
 import org.biokoframework.system.repository.memory.InMemoryRepository;
 import org.biokoframework.system.services.RepositoryModule;
@@ -47,10 +50,8 @@ import org.biokoframework.utils.repository.RepositoryException;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * 
@@ -88,25 +89,25 @@ public class AnnotationHandlerLocatorTest {
 		IRoute postRoute = new RouteImpl(HttpMethod.POST, Crud.DUMMY_CRUD, null);
 		IHandler handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(org.biokoframework.system.command.crud.CrudCommand.class)));
+		assertThat(handler.getCommand(fInjector), is(instanceOf(CreateEntityCommand.class)));
 				
 		// GET Test
 		IRoute getRoute = new RouteImpl(HttpMethod.GET, Crud.DUMMY_CRUD, null);
 		handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(org.biokoframework.system.command.crud.CrudCommand.class)));
+		assertThat(handler.getCommand(fInjector), is(instanceOf(RetrieveEntityCommand.class)));
 		
 		// PUT Test
 		IRoute putRoute = new RouteImpl(HttpMethod.PUT, Crud.DUMMY_CRUD, null);
 		handler = fLocator.getHandler(putRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(org.biokoframework.system.command.crud.CrudCommand.class)));
+		assertThat(handler.getCommand(fInjector), is(instanceOf(UpdateEntityCommand.class)));
 		
-		// PUT Test
+		// DELETE Test
 		IRoute deleteRoute = new RouteImpl(HttpMethod.DELETE, Crud.DUMMY_CRUD, null);
 		handler = fLocator.getHandler(deleteRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(org.biokoframework.system.command.crud.CrudCommand.class)));
+		assertThat(handler.getCommand(fInjector), is(instanceOf(DeleteEntityCommand.class)));
 				
 	}
 	
@@ -116,15 +117,7 @@ public class AnnotationHandlerLocatorTest {
 				new RepositoryModule() {
 					@Override
 					protected void configureRepositories() throws RepositoryException {
-						bindEntity(DummyEntity.class).toInstance(new InMemoryRepository<>(DummyEntity.class));
-					}
-				},
-				new AbstractModule() {
-					@Override
-					protected void configure() {
-						install(new FactoryModuleBuilder()
-							.implement(org.biokoframework.system.command.crud.CrudCommand.class, org.biokoframework.system.command.crud.CrudCommand.class)
-							.build(ICrudCommandFactory.class));
+						bindEntity(DummyEntity.class).toInstance(new InMemoryRepository<DummyEntity>(DummyEntity.class));
 					}
 				});
 	}

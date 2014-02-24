@@ -31,11 +31,12 @@ import java.util.List;
 
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.system.command.ICommand;
-import org.biokoframework.system.command.crud.ICrudCommandFactory;
 import org.biokoframework.system.service.validation.IValidator;
 import org.biokoframework.utils.domain.DomainEntity;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 
 /**
  * 
@@ -43,23 +44,35 @@ import com.google.inject.Injector;
  * @date Feb 16, 2014
  *
  */
-public class CrudHandler implements IHandler {
+public class GenericHandler implements IHandler {
 
 	private final Class<? extends DomainEntity> fEntity;
+	private final Class<? extends ICommand> fCommand;
 
-	public CrudHandler(Class<? extends DomainEntity> entity) {
+	public GenericHandler(Class<? extends DomainEntity> entity, Class<? extends ICommand> command) {
+		fCommand = command;
 		fEntity = entity;
 	}
 	
 	@Override
 	public ICommand getCommand(Injector injector) {
-		return injector.getInstance(ICrudCommandFactory.class).create(fEntity);
+		injector = injector.createChildInjector(new EntityModule());
+		return injector.getInstance(fCommand);
 	}
 
 	@Override
 	public List<IValidator> getValidators() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	public class EntityModule extends AbstractModule {
+
+		@Override
+		protected void configure() {
+			bindConstant().annotatedWith(Names.named("entity")).to(fEntity);
+		}
+
 	}
 
 }
