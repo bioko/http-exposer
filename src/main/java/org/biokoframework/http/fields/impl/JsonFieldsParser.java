@@ -48,7 +48,6 @@ import org.biokoframework.utils.fields.Fields;
 public class JsonFieldsParser extends AbstractFieldsParser {
 
 	private static final String JSON_TYPE = "application/json";
-	private static final String JSON_EXTENSION = "json";
 
 	@Override
 	public Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {		
@@ -57,17 +56,16 @@ public class JsonFieldsParser extends AbstractFieldsParser {
 			reader = request.getReader();
 			Writer writer = new StringWriter();
 			IOUtils.copy(reader, writer);
-			Fields.fromJson(writer.toString());
+			return Fields.fromJson(writer.toString());
 		} catch (IOException exception) {
 			// TODO log exception
 			throw new RequestNotSupportedException(exception);
 		}
-		return null;
 	}
 
 	@Override
-	protected void checkContentType(String contentType, String extension) throws RequestNotSupportedException {
-		if (!StringUtils.startsWith(contentType, JSON_TYPE) && !StringUtils.equals(extension, JSON_EXTENSION)) {
+	protected void checkContentType(String contentType) throws RequestNotSupportedException {
+		if (!StringUtils.startsWith(contentType, JSON_TYPE)){
 			throw badContentType(contentType, JSON_TYPE);
 		}
 	}
