@@ -34,6 +34,7 @@ import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -65,6 +66,8 @@ public class MockRequest implements HttpServletRequest {
 	private final String fPath;
 	private final String fContent;
 	private String fType;
+	private Map<String, String> fHeaders;
+	private String fCharacterEncoding;
 	
 	public MockRequest(String method, String path) {
 		this(method, path, "");
@@ -74,11 +77,18 @@ public class MockRequest implements HttpServletRequest {
 		fMethod = method;
 		fPath = path;
 		fContent = content;
+		fHeaders = new HashMap<String, String>();
+	}
+	
+
+	@Override
+	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
+		fCharacterEncoding = env;
 	}
 	
 	@Override
 	public String getCharacterEncoding() {
-		return null;
+		return fCharacterEncoding;
 	}
 	
 	@Override
@@ -115,6 +125,15 @@ public class MockRequest implements HttpServletRequest {
 	@Override
 	public String getContentType() {
 		return fType;
+	}
+	
+	public void setHeader(String name, String value) {
+		fHeaders.put(name, value);
+	}
+
+	@Override
+	public String getHeader(String name) {
+		return fHeaders.get(name);
 	}
 	
 	private static final class MOCSIS extends ServletInputStream {
@@ -154,11 +173,6 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public Enumeration<String> getAttributeNames() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -324,11 +338,6 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public long getDateHeader(String name) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getHeader(String name) {
 		throw new UnsupportedOperationException();
 	}
 

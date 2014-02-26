@@ -50,21 +50,7 @@ import org.junit.Test;
 public class AbstractFieldsParserTest {
 
 	@Test
-	public void testExtensionAndCharset() throws Exception {
-		MockFieldsParser parser = new MockFieldsParser();
-		
-		MockRequest request = new MockRequest("POST", "/something.txt", "some plain text content");
-		request.setContentType("text/plain");
-		
-		parser.parse(request);
-		
-		assertThat(parser.getCapturedRequest(), is(theInstance((HttpServletRequest)request)));
-		assertThat(parser.getCapturedContentType(), is(equalTo("text/plain")));
-		assertThat(parser.getCapturedExtension(), is(equalTo("txt")));
-	}
-	
-	@Test
-	public void testRequestType() throws Exception {
+	public void testContentType() throws Exception {
 		MockFieldsParser parser = new MockFieldsParser();
 		
 		MockRequest request = new MockRequest("POST", "/something", "some plain text content");
@@ -74,11 +60,10 @@ public class AbstractFieldsParserTest {
 		
 		assertThat(parser.getCapturedRequest(), is(theInstance((HttpServletRequest)request)));
 		assertThat(parser.getCapturedContentType(), is(equalTo("text/plain")));
-		assertThat(parser.getCapturedExtension(), is(nullValue()));
 	}
 	
 	@Test
-	public void testExtension() throws Exception {
+	public void testContentTypeNotPresent() throws Exception {
 		MockFieldsParser parser = new MockFieldsParser();
 		
 		MockRequest request = new MockRequest("POST", "/something.txt", "some plain text content");
@@ -87,14 +72,12 @@ public class AbstractFieldsParserTest {
 		
 		assertThat(parser.getCapturedRequest(), is(theInstance((HttpServletRequest)request)));
 		assertThat(parser.getCapturedContentType(), is(nullValue()));
-		assertThat(parser.getCapturedExtension(), is(equalTo("txt")));
 	}
 	
 	private final class MockFieldsParser extends AbstractFieldsParser {
 
 		private HttpServletRequest fRequest;
 		private String fContentType;
-		private String fExtension;
 
 		@Override
 		protected Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {
@@ -103,13 +86,8 @@ public class AbstractFieldsParserTest {
 		}
 
 		@Override
-		protected void checkContentType(String contentType, String extension) throws RequestNotSupportedException {
+		protected void checkContentType(String contentType) throws RequestNotSupportedException {
 			fContentType = contentType;
-			fExtension = extension;
-		}
-		
-		public String getCapturedExtension() {
-			return fExtension;
 		}
 		
 		public String getCapturedContentType() {
