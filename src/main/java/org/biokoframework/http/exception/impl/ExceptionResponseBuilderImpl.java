@@ -58,6 +58,7 @@ import org.json.simple.JSONValue;
  */
 public class ExceptionResponseBuilderImpl implements IExceptionResponseBuilder {
 
+	private static final Logger LOGGER = Logger.getLogger(ExceptionResponseBuilderImpl.class);
 	private final Map<Class<? extends BiokoException>, Integer> fStatusCodesMap;
 	
 	@Inject
@@ -69,9 +70,9 @@ public class ExceptionResponseBuilderImpl implements IExceptionResponseBuilder {
 	public HttpServletResponse build(HttpServletResponse response, Exception exception, Fields input, Fields output) throws IOException {	
 		response.setContentType(ContentType.APPLICATION_JSON.toString());
 		
-		Logger.getRootLogger().info("Before choosing");
+		LOGGER.info("Before choosing");
 		response.setStatus(chooseStatusCode(exception));
-		Logger.getRootLogger().info("After choosing");
+		LOGGER.info("After choosing");
 		
 		List<ErrorEntity> errors = null;
 		if (exception instanceof BiokoException) {

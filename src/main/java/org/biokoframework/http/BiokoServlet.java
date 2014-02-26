@@ -43,10 +43,10 @@ import org.apache.log4j.PropertyConfigurator;
 import org.biokoframework.http.exception.IExceptionResponseBuilder;
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.http.handler.IHandlerLocator;
+import org.biokoframework.http.response.IHttpResponseBuilder;
 import org.biokoframework.http.routing.IHttpRouteParser;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.system.KILL_ME.SystemNames;
-import org.biokoframework.system.KILL_ME.commons.logger.Loggers;
 import org.biokoframework.utils.fields.Fields;
 
 import com.google.inject.Injector;
@@ -57,10 +57,14 @@ import com.google.inject.Singleton;
 public class BiokoServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -2990444858272343398L;
+	private static final Logger LOGGER = Logger.getLogger(BiokoServlet.class);
 
-	private IHandlerLocator fLocator;
-	private IHttpRouteParser fRequestParser;
 	private Injector fInjector;
+
+	private IHttpRouteParser fRequestParser;
+	private IHandlerLocator fLocator;
+
+	private IHttpResponseBuilder fResponseBuilder;
 	private IExceptionResponseBuilder fExceptionResponseBuilder;
 	
 	private String fSystemName;
@@ -79,10 +83,11 @@ public class BiokoServlet extends HttpServlet {
 		fInjector = (Injector) config.getServletContext().getAttribute(Injector.class.getName());
 		fRequestParser = fInjector.getInstance(IHttpRouteParser.class);
 		fLocator = fInjector.getInstance(IHandlerLocator.class);
+
+		fResponseBuilder = fInjector.getInstance(IHttpResponseBuilder.class);
 		fExceptionResponseBuilder = fInjector.getInstance(IExceptionResponseBuilder.class);
 		
-		Loggers.engagedInterface.info("System-Config: " + fSystemName + " " + fSystemVersion + " " + fSystemConfig);
-		System.out.println("System-Config: " + fSystemName + " " + fSystemVersion + " " + fSystemConfig);
+		LOGGER.info("System-Config: " + fSystemName + " " + fSystemVersion + " " + fSystemConfig);
 
 		loadLogProperties(fSystemName);
 
@@ -95,8 +100,8 @@ public class BiokoServlet extends HttpServlet {
 	
 	@Override
 	public void destroy() {
-		Loggers.engagedInterface.info("Bioko servlet is going down");
-		Loggers.engagedInterface.info("Adios!");
+		LOGGER.info("Bioko servlet is going down");
+		LOGGER.info("Adios!");
 		super.destroy();
 	}
 
@@ -104,30 +109,32 @@ public class BiokoServlet extends HttpServlet {
 
 		RequestWrapper requestWrapper = new RequestWrapper(req);
 		
-		Loggers.engagedInterface.debug(">>>>>>>>>>>>>>>>>>>> SERVLET >>>>>>>>>>>>>>>>>>>");
-		Loggers.engagedInterface.debug(requestWrapper.report());
-		Loggers.engagedInterface.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+		LOGGER.debug(">>>>>>>>>>>>>>>>>>>> SERVLET >>>>>>>>>>>>>>>>>>>");
+		LOGGER.debug(requestWrapper.report());
+		LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		
 		Fields input = null;
 		Fields output = null;
 		
 		try {
 			String pathTranslated = requestWrapper.getPathTranslated();
-			Loggers.engagedInterface.info("pathTranslated: " + pathTranslated);
+			LOGGER.info("pathTranslated: " + pathTranslated);
 
 			IRoute route = fRequestParser.getRoute(requestWrapper);
 			input = route.getFields();
 
-			Logger.getRootLogger().info("Before getHandler");
+			LOGGER.info("Before getHandler");
 			IHandler handler = fLocator.getHandler(route);
-			Logger.getRootLogger().info("Before afterHandler");
+			LOGGER.info("Before afterHandler");
 			
-			Logger.getRootLogger().info("Before execute");
+			LOGGER.info("Before execute");
 			output = handler.getCommand(fInjector).execute(input);
-			Logger.getRootLogger().info("After execute");
+			LOGGER.info("After execute");
+			
+			fResponseBuilder.build(requestWrapper, response, input, output);
 
 		} catch (Exception exception) {
-			Logger.getRootLogger().error("Exception", exception);
+			LOGGER.error("Exception", exception);
 			response = fExceptionResponseBuilder.build(response, exception, input, output);
 		}
 	}
@@ -140,7 +147,7 @@ public class BiokoServlet extends HttpServlet {
 				log4jPromo.close();		
 			}
 		} catch (Exception exception) {
-			Loggers.engagedInterface.error("Load properties file for logger", exception);
+			LOGGER.error("Load properties file for logger", exception);
 		}
 	}
 

@@ -39,7 +39,6 @@ import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.routing.IHttpRouteParser;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.RouteNotSupportedException;
-import org.biokoframework.http.routing.impl.RouteImpl;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.utils.fields.Fields;
 
@@ -61,7 +60,6 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 	
 	@Override
 	public IRoute getRoute(HttpServletRequest request) throws RouteNotSupportedException {
-		// TODO add parsing of the request
 		return new RouteImpl(getMethod(request), getPath(request), getFields(request));
 	}
 

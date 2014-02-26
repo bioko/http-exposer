@@ -49,17 +49,18 @@ import org.biokoframework.utils.fields.Fields;
  */
 public abstract class AbstractHandlerLocator implements IHandlerLocator {
 
+	private static final Logger LOGGER = Logger.getLogger(AbstractHandlerLocator.class);
 	private final ArrayList<Entry<IRouteMatcher, IHandler>> fRoutes = new ArrayList<>();
 	
 	@Override
 	public IHandler getHandler(IRoute route) throws UnknownRouteException {
-		Logger.getRootLogger().info("Start searching");
+		LOGGER.info("Start searching");
 		for (Entry<IRouteMatcher, IHandler> anEntry : fRoutes) {
 			if (anEntry.getKey().matches(route)) {
 				return anEntry.getValue();
 			}
 		}
-		Logger.getRootLogger().info("End searching");
+		LOGGER.info("End searching");
 		
 		throw createUnknownRoute(route);
 	}
