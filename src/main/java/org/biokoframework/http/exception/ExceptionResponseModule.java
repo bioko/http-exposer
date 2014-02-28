@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.biokoframework.http.exception.impl.ExceptionResponseBuilderImpl;
+import org.biokoframework.http.routing.UnknownRouteException;
 import org.biokoframework.system.KILL_ME.exception.CommandNotFoundException;
 import org.biokoframework.system.command.CommandException;
 import org.biokoframework.system.entity.EntityNotFoundException;
@@ -69,8 +70,10 @@ public class ExceptionResponseModule extends AbstractModule {
 		
 		map.put(BadCommandInvocationException.class, 400);
 		map.put(AuthenticationFailureException.class, 401);
+		
 		map.put(EntityNotFoundException.class, 404);
 		map.put(CommandNotFoundException.class, 404);
+		map.put(UnknownRouteException.class, 404);
 
 		map.put(ValidationException.class, 400);
 		map.put(CommandException.class, 500);
