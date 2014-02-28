@@ -75,7 +75,11 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 	protected void registerCommand(Field aCandidateCommand) {
 		try {
 			Command annotation = aCandidateCommand.getAnnotation(Command.class);
-			IRouteMatcher matcher = createRouteMatcher(annotation.rest(), (String) aCandidateCommand.get(null));
+			String basePath = (String) aCandidateCommand.get(null);
+			if (!basePath.startsWith("/")) {
+				basePath = "/" + basePath;
+			}
+			IRouteMatcher matcher = createRouteMatcher(annotation.rest(), basePath);
 			IHandler handler = createBasicHandler(annotation.impl());
 			addRoute(matcher, handler);
 		} catch (IllegalAccessException exception) {
@@ -95,23 +99,30 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 	protected void registerCrudCommand(Field aCandidateCommand) {
 		try {
 			CrudCommand annotation = aCandidateCommand.getAnnotation(CrudCommand.class);
+			String basePath = (String) aCandidateCommand.get(null);
+			if (!basePath.startsWith("/")) {
+				basePath = "/" + basePath;
+			}
+			if (!basePath.contains("/{<\\d*>id}")) {
+				basePath = basePath + "/{<\\d*>id}";
+			}
 			if (annotation.create()) {
-				IRouteMatcher matcher = createRouteMatcher(HttpMethod.POST, (String) aCandidateCommand.get(null));
+				IRouteMatcher matcher = createRouteMatcher(HttpMethod.POST, basePath);
 				IHandler handler = new GenericHandler(annotation.entity(), CreateEntityCommand.class);
 				addRoute(matcher, handler);
 			}
 			if (annotation.read()) {
-				IRouteMatcher matcher = createRouteMatcher(HttpMethod.GET, (String) aCandidateCommand.get(null));
+				IRouteMatcher matcher = createRouteMatcher(HttpMethod.GET, basePath);
 				IHandler handler = new GenericHandler(annotation.entity(), RetrieveEntityCommand.class);
 				addRoute(matcher, handler);
 			}
 			if (annotation.update()) {
-				IRouteMatcher matcher = createRouteMatcher(HttpMethod.PUT, (String) aCandidateCommand.get(null));
+				IRouteMatcher matcher = createRouteMatcher(HttpMethod.PUT, basePath);
 				IHandler handler = new GenericHandler(annotation.entity(), UpdateEntityCommand.class);
 				addRoute(matcher, handler);
 			}
 			if (annotation.delete()) {
-				IRouteMatcher matcher = createRouteMatcher(HttpMethod.DELETE, (String) aCandidateCommand.get(null));
+				IRouteMatcher matcher = createRouteMatcher(HttpMethod.DELETE, basePath);
 				IHandler handler = new GenericHandler(annotation.entity(), DeleteEntityCommand.class);
 				addRoute(matcher, handler);
 			}

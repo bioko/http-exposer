@@ -73,14 +73,14 @@ public class HttpRouteParserImplTest {
 		IRoute route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
-		assertThat(route.getPath(), is(equalTo("path")));
+		assertThat(route.getPath(), is(equalTo("/path/")));
 		
 		request = new MockRequest(HttpMethod.GET.toString(), "/path/");
 		
 		route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
-		assertThat(route.getPath(), is(equalTo("path")));
+		assertThat(route.getPath(), is(equalTo("/path/")));
 	}
 
 	@Test
@@ -91,7 +91,7 @@ public class HttpRouteParserImplTest {
 		IRoute route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.POST)));
-		assertThat(route.getPath(), is(equalTo("")));
+		assertThat(route.getPath(), is(equalTo("/")));
 		
 	}
 	
@@ -111,14 +111,14 @@ public class HttpRouteParserImplTest {
 		IRoute route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.PUT)));
-		assertThat(route.getPath(), is(equalTo("some/thing")));
+		assertThat(route.getPath(), is(equalTo("/some%2Fthing/")));
 		
 		request = new MockRequest(HttpMethod.PUT.toString(), "/some%2Fthing/");
 		
 		route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.PUT)));
-		assertThat(route.getPath(), is(equalTo("some/thing")));
+		assertThat(route.getPath(), is(equalTo("/some%2Fthing/")));
 	}
 	
 	@Test
@@ -128,7 +128,7 @@ public class HttpRouteParserImplTest {
 		IRoute route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
 		assertThat(route.getMethod(), is(equalTo(HttpMethod.PUT)));
-		assertThat(route.getPath(), is(equalTo("withField")));
+		assertThat(route.getPath(), is(equalTo("/withField/")));
 		assertThat(fMockFieldsParser.wasCalledParse(), is(true));
 	}
 	

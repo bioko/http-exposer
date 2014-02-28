@@ -82,7 +82,7 @@ public class HttpResponseBuilderImpl extends AbstractHttpResponseBuilder {
 			}
 			throw new RequestNotSupportedException(new ErrorEntity(new Fields(
 					ErrorEntity.ERROR_CODE, FieldNames.UNSUPPORTED_FORMAT_CODE,
-					ErrorEntity.ERROR_MESSAGE, "Response with type" + extension + " are not supported")));
+					ErrorEntity.ERROR_MESSAGE, "Response with type " + extension + " are not supported")));
 		}
 	}
 	

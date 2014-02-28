@@ -27,13 +27,9 @@
 
 package org.biokoframework.http.routing.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.routing.IHttpRouteParser;
@@ -50,7 +46,6 @@ import org.biokoframework.utils.fields.Fields;
  */
 public class HttpRouteParserImpl implements IHttpRouteParser {
 
-	private static final String UTF8 = "utf8";
 	private final IHttpFieldsParser fFieldsParser;
 	
 	@Inject
@@ -83,17 +78,12 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 		}
 	}
 
-	private String getPath(HttpServletRequest request) throws RouteNotSupportedException {
-		try {
-			String[] splitted = request.getPathInfo().split("/");
-			if (splitted.length > 1) {
-				String encoding = StringUtils.defaultString(request.getCharacterEncoding(), UTF8);
-				return URLDecoder.decode(splitted[1], encoding);
-			}
-			return "";
-		} catch (UnsupportedEncodingException exception) {
-			throw new RouteNotSupportedException(exception);
+	private String getPath(HttpServletRequest request) {
+		String path = request.getPathInfo();
+		if (!path.endsWith("/")) {
+			return path + "/";
 		}
+		return path;
 	}
 
 }
