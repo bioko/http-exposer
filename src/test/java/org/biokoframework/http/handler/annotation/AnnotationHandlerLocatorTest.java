@@ -110,7 +110,7 @@ public class AnnotationHandlerLocatorTest {
 		assertThat(handler.getCommand(fInjector), is(instanceOf(DeleteEntityCommand.class)));
 				
 	}
-	
+		
 	@Before
 	public void createInjector() {
 		fInjector = Guice.createInjector(
@@ -124,15 +124,15 @@ public class AnnotationHandlerLocatorTest {
 	
 	private static class Simple {
 		@Command(impl = MockCommand.class, rest = HttpMethod.GET)
-		public static final String SIMPLE_GET_COMMAND = "simple-get-command";
+		public static final String SIMPLE_GET_COMMAND = "/simple-get-command/";
 		
 		@Command(impl = MockCommand.class, rest = HttpMethod.POST)
-		public static final String SIMPLE_POST_COMMAND = "simple-post-command";
+		public static final String SIMPLE_POST_COMMAND = "/simple-post-command";
 	}
 	
 	private static class Crud {
 		@CrudCommand(entity = DummyEntity.class, repoName = "dummyCrud")
-		public static final String DUMMY_CRUD = "dummy-crud";
+		public static final String DUMMY_CRUD = "/dummy-crud/";
 	}
 
 }

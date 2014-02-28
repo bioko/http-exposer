@@ -27,11 +27,16 @@
 
 package org.biokoframework.http.routing.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.IRouteMatcher;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
+import org.biokoframework.utils.fields.Fields;
 
 /**
  * 
@@ -42,16 +47,67 @@ import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 public class RouteMatcherImpl implements IRouteMatcher {
 
 	private final HttpMethod fMethod;
-	private final Pattern fPattern;
+	private final Pattern fParameterPattern = Pattern.compile("\\{(?:<.*>)?[a-z]+\\}");
+	private final Pattern fRoutePattern;
+	
+	private final List<String> fParameterNames;
 
-	public RouteMatcherImpl(HttpMethod method, String regexp) {
+	public RouteMatcherImpl(HttpMethod method, String routePath) {
 		fMethod = method;
-		fPattern = Pattern.compile(regexp);
+		fParameterNames = new ArrayList<>();
+		
+		String plainPath = stripParameters(routePath);
+		fRoutePattern = Pattern.compile(fixTrailingSlash(plainPath));
+		
 	}
 
 	@Override
 	public boolean matches(IRoute route) {
-		return fMethod.equals(route.getMethod()) && fPattern.matcher(route.getPath()).matches();
+		if (fMethod.equals(route.getMethod())) {
+			Matcher matcher = fRoutePattern.matcher(route.getPath());
+			if (matcher.matches()) {
+				Fields parameters = new Fields();
+				int i = 1;
+				for (String aParameterName : fParameterNames) {
+					String paramValue = matcher.group(i);
+					if (!paramValue.isEmpty()) {
+						parameters.put(aParameterName, paramValue);
+					}
+					i++;
+				}
+				
+				route.matchedParameters(parameters);
+					
+				return true;
+			}
+		}
+		return false;
 	}
+	
+	private String fixTrailingSlash(String routePath) {
+		if (routePath.endsWith("/")) {
+			routePath = routePath + "?";
+		} else if (routePath.endsWith("/?")) {
+			return routePath;
+		}
+		return routePath + "/?";
+	}
+	
+	private String stripParameters(String routePath) {
+		Matcher matcher = fParameterPattern.matcher(routePath);
+		if (matcher.find()) {
+			String replacementString = extractParameter(matcher.group(0));
+			routePath = routePath.replace(matcher.group(0), replacementString);
+		}
+		return routePath;
+	}
+
+	private String extractParameter(String group) {
+		String parameterName = group.replaceAll("\\{(<.*>)?", "").replaceAll("\\}", "");
+		fParameterNames.add(parameterName);
+		String paramRegexp = group.replaceAll("\\{<?", "").replaceAll(">?" + parameterName + "\\}", "");
+		return "(" + StringUtils.defaultIfEmpty(paramRegexp, "[^\\{\\}/\\.]*") + ")";
+	}
+
 
 }

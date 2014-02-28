@@ -44,4 +44,6 @@ public interface IRoute {
 
 	Fields getFields();
 	
+	void matchedParameters(Fields parameters);
+	
 }

@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.routing.impl;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.utils.fields.Fields;
@@ -46,7 +47,8 @@ public class RouteImpl implements IRoute {
 	public RouteImpl(HttpMethod httpMethod, String path, Fields fields) {
 		fHttpMethod = httpMethod;
 		fPath = path;
-		fFields = fields;
+		
+		fFields = ObjectUtils.defaultIfNull(fields, new Fields());
 	}
 	
 	@Override
@@ -62,6 +64,11 @@ public class RouteImpl implements IRoute {
 	@Override
 	public Fields getFields() {
 		return fFields;
+	}
+
+	@Override
+	public void matchedParameters(Fields parameters) {
+		fFields.putAll(parameters);
 	}
 
 }
