@@ -58,7 +58,7 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 	private final Class<?> fCommandsClass;
 
 	@Inject
-	public AnnotationHandlerLocator(@Named("Commands") Class<?> commandsClass) {
+	public AnnotationHandlerLocator(@SuppressWarnings("rawtypes") @Named("Commands") Class commandsClass) {
 		fCommandsClass = commandsClass;
 		
 		for (Field aCandidateCommand : fCommandsClass.getFields()) {

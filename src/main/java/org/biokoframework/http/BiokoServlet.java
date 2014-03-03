@@ -30,6 +30,7 @@ package org.biokoframework.http;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Singleton;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
@@ -46,11 +47,12 @@ import org.biokoframework.http.handler.IHandlerLocator;
 import org.biokoframework.http.response.IHttpResponseBuilder;
 import org.biokoframework.http.routing.IHttpRouteParser;
 import org.biokoframework.http.routing.IRoute;
-import org.biokoframework.system.KILL_ME.SystemNames;
+import org.biokoframework.system.ConfigurationEnum;
 import org.biokoframework.utils.fields.Fields;
 
 import com.google.inject.Injector;
-import com.google.inject.Singleton;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 
 @Singleton
 @MultipartConfig
@@ -69,18 +71,19 @@ public class BiokoServlet extends HttpServlet {
 	
 	private String fSystemName;
 	private String fSystemVersion;
-	private String fSystemConfig;
+	private ConfigurationEnum fSystemConfig;
 
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		
-		fSystemName = SystemNames.SYSTEM_A;
-		fSystemVersion = "1.0";
-		fSystemConfig = "DEV";
 
 		fInjector = (Injector) config.getServletContext().getAttribute(Injector.class.getName());
+		
+		fSystemName = fInjector.getInstance(Key.get(String.class, Names.named("systemName")));
+		fSystemVersion = fInjector.getInstance(Key.get(String.class, Names.named("systemVersion")));
+		fSystemConfig = fInjector.getInstance(ConfigurationEnum.class);
+
 		fRequestParser = fInjector.getInstance(IHttpRouteParser.class);
 		fLocator = fInjector.getInstance(IHandlerLocator.class);
 
