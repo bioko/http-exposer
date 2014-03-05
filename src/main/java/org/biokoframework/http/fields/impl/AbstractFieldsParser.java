@@ -65,9 +65,10 @@ public abstract class AbstractFieldsParser implements IHttpFieldsParser {
 				.append("Request type ").append(foundContentType).append(" not supported. ")
 				.append(expectedContentType).append(" expected.").toString();
 		
-		return new RequestNotSupportedException(new ErrorEntity(new Fields(
+		ErrorEntity entity = new ErrorEntity();
+		entity.setAll(new Fields(
 				ErrorEntity.ERROR_CODE, FieldNames.UNSUPPORTED_FORMAT_CODE,
-				ErrorEntity.ERROR_MESSAGE, message
-			)));
+				ErrorEntity.ERROR_MESSAGE, message));
+		return new RequestNotSupportedException(entity);
 	}
 }

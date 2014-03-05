@@ -84,10 +84,11 @@ public class ExceptionResponseBuilderImpl implements IExceptionResponseBuilder {
 			StringBuilder message = new StringBuilder()
 				.append("An unexpected exception as been captured ").append(descriptionOf(exception));
 				
-			errors.add(new ErrorEntity(new Fields(
-						ErrorEntity.ERROR_CODE, FieldNames.CONTAINER_EXCEPTION_CODE,
-						ErrorEntity.ERROR_MESSAGE, message.toString()
-			)));
+			ErrorEntity entity = new ErrorEntity();
+			entity.setAll(new Fields(
+					ErrorEntity.ERROR_CODE, FieldNames.CONTAINER_EXCEPTION_CODE,
+					ErrorEntity.ERROR_MESSAGE, message.toString()));
+			errors.add(entity);
 		}
 		IOUtils.copy(new StringReader(JSONValue.toJSONString(errors)), response.getWriter());
 		

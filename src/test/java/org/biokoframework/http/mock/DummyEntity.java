@@ -29,7 +29,6 @@ package org.biokoframework.http.mock;
 
 import org.biokoframework.utils.domain.DomainEntity;
 import org.biokoframework.utils.domain.annotation.field.Field;
-import org.biokoframework.utils.fields.Fields;
 
 /**
  * 
@@ -43,9 +42,5 @@ public class DummyEntity extends DomainEntity {
 
 	@Field
 	public static final String A_FIELD = "aField";
-	
-	public DummyEntity(Fields input) {
-		super(input);
-	}
 	
 }

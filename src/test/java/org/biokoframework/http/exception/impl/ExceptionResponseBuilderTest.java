@@ -88,10 +88,11 @@ public class ExceptionResponseBuilderTest {
 		ExceptionResponseBuilderImpl builder = new ExceptionResponseBuilderImpl(fCodesMap);
 		
 		MockResponse mockResponse = new MockResponse();
-		MockException mockException = new MockException(new ErrorEntity(new Fields(
+		ErrorEntity error = new ErrorEntity();
+		error.setAll(new Fields(
 				ErrorEntity.ERROR_CODE, 12345,
-				ErrorEntity.ERROR_MESSAGE, "Failed at life"
-		)));
+				ErrorEntity.ERROR_MESSAGE, "Failed at life"));
+		MockException mockException = new MockException(error);
 		
 		mockResponse = (MockResponse) builder.build(mockResponse, mockException, null, null);
 		
@@ -105,10 +106,11 @@ public class ExceptionResponseBuilderTest {
 		ExceptionResponseBuilderImpl builder = new ExceptionResponseBuilderImpl(fCodesMap);
 		
 		MockResponse mockResponse = new MockResponse();
-		MockException mockException = new MockException(new CommandException(new ErrorEntity(new Fields(
+		ErrorEntity error = new ErrorEntity();
+		error.setAll(new Fields(
 				ErrorEntity.ERROR_CODE, 12345,
-				ErrorEntity.ERROR_MESSAGE, "Failed at life"
-		))));
+				ErrorEntity.ERROR_MESSAGE, "Failed at life"));
+		MockException mockException = new MockException(new CommandException(error));
 		
 		mockResponse = (MockResponse) builder.build(mockResponse, mockException, null, null);
 		

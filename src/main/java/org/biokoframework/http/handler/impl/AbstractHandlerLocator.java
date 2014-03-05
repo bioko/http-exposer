@@ -75,10 +75,11 @@ public abstract class AbstractHandlerLocator implements IHandlerLocator {
 			.append(" ").append(route.getPath()).append(" not found")
 			.toString();
 		
-		ErrorEntity errorEntity = new ErrorEntity(new Fields(
+		
+		ErrorEntity errorEntity = new ErrorEntity();
+		errorEntity.setAll(new Fields(
 				ErrorEntity.ERROR_CODE, FieldNames.COMMAND_NOT_FOUND_CODE,
-				ErrorEntity.ERROR_MESSAGE, message
-			));
+				ErrorEntity.ERROR_MESSAGE, message));
 		return new UnknownRouteException(errorEntity);
 	}
 	

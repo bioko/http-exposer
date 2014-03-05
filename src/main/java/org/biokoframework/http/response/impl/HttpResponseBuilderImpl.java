@@ -71,18 +71,22 @@ public class HttpResponseBuilderImpl extends AbstractHttpResponseBuilder {
 	protected void checkAcceptType(List<String> acceptedTypes, String extension) throws RequestNotSupportedException {
 
 		if (!StringUtils.isEmpty(extension) && !JSON_EXTENSION.equals(extension)) {
-			throw new RequestNotSupportedException(new ErrorEntity(new Fields(
+			ErrorEntity entity = new ErrorEntity();
+			entity.setAll(new Fields(
 					ErrorEntity.ERROR_CODE, FieldNames.UNSUPPORTED_FORMAT_CODE,
-					ErrorEntity.ERROR_MESSAGE, "Request with extension " + extension + " are not supported")));
+					ErrorEntity.ERROR_MESSAGE, "Request with extension " + extension + " are not supported"));
+			throw new RequestNotSupportedException(entity);
 		} else if (acceptedTypes != null && !acceptedTypes.isEmpty()) {
 			for (String anAcceptedType : acceptedTypes) {
 				if (anAcceptedType.startsWith(APPLICATION_JSON)) {
 					return;
 				}
 			}
-			throw new RequestNotSupportedException(new ErrorEntity(new Fields(
+			ErrorEntity entity = new ErrorEntity();
+			entity.setAll(new Fields(
 					ErrorEntity.ERROR_CODE, FieldNames.UNSUPPORTED_FORMAT_CODE,
-					ErrorEntity.ERROR_MESSAGE, "Response with type " + extension + " are not supported")));
+					ErrorEntity.ERROR_MESSAGE, "Response with type " + extension + " are not supported"));
+			throw new RequestNotSupportedException(entity);
 		}
 	}
 	
