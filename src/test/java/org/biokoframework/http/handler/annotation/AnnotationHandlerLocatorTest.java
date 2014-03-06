@@ -37,6 +37,7 @@ import org.biokoframework.http.mock.DummyEntity;
 import org.biokoframework.http.mock.MockCommand;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.impl.RouteImpl;
+import org.biokoframework.system.ConfigurationEnum;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.system.command.annotation.Command;
 import org.biokoframework.system.command.crud.CreateEntityCommand;
@@ -45,8 +46,7 @@ import org.biokoframework.system.command.crud.RetrieveEntityCommand;
 import org.biokoframework.system.command.crud.UpdateEntityCommand;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
 import org.biokoframework.system.repository.memory.InMemoryRepository;
-import org.biokoframework.system.services.RepositoryModule;
-import org.biokoframework.utils.repository.RepositoryException;
+import org.biokoframework.system.services.repository.RepositoryModule;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -114,11 +114,15 @@ public class AnnotationHandlerLocatorTest {
 	@Before
 	public void createInjector() {
 		fInjector = Guice.createInjector(
-				new RepositoryModule() {
+				new RepositoryModule(ConfigurationEnum.DEV) {
 					@Override
-					protected void configureRepositories() throws RepositoryException {
-						bindEntity(DummyEntity.class).toInstance(new InMemoryRepository<DummyEntity>(DummyEntity.class));
+					protected void configureForDev() {
+						bindRepositoryTo(InMemoryRepository.class);
 					}
+					@Override
+					protected void configureForDemo() { }
+					@Override
+					protected void configureForProd() { }
 				});
 	}
 	
