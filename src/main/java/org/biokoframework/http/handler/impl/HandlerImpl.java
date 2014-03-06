@@ -27,11 +27,11 @@
 
 package org.biokoframework.http.handler.impl;
 
-import java.util.List;
-
 import org.biokoframework.http.handler.IHandler;
+import org.biokoframework.system.command.CommandException;
 import org.biokoframework.system.command.ICommand;
-import org.biokoframework.system.service.validation.IValidator;
+import org.biokoframework.utils.exception.ValidationException;
+import org.biokoframework.utils.fields.Fields;
 
 import com.google.inject.Injector;
 
@@ -44,20 +44,20 @@ import com.google.inject.Injector;
 public class HandlerImpl implements IHandler {
 
 	private final Class<? extends ICommand> fCommand;
+	private final Injector fInjector;
 	
-	public HandlerImpl(Class<? extends ICommand> command) {
+	public HandlerImpl(Class<? extends ICommand> command, Injector injector) {
 		fCommand = command;
+		fInjector = injector;
+	}
+	
+	private ICommand getCommand() {
+		return fInjector.getInstance(fCommand);
 	}
 	
 	@Override
-	public ICommand getCommand(Injector injector) {
-		return injector.getInstance(fCommand);
-	}
-
-	@Override
-	public List<IValidator> getValidators() {
-		// TODO Auto-generated method stub
-		return null;
+	public Fields executeCommand(Fields input) throws CommandException, ValidationException {
+		return getCommand().execute(input);
 	}
 
 }

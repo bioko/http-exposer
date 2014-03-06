@@ -27,12 +27,12 @@
 
 package org.biokoframework.http.handler.impl;
 
-import java.util.List;
-
 import org.biokoframework.http.handler.IHandler;
+import org.biokoframework.system.command.CommandException;
 import org.biokoframework.system.command.ICommand;
-import org.biokoframework.system.service.validation.IValidator;
 import org.biokoframework.utils.domain.DomainEntity;
+import org.biokoframework.utils.exception.ValidationException;
+import org.biokoframework.utils.fields.Fields;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
@@ -48,25 +48,29 @@ public class GenericHandler implements IHandler {
 
 	private final Class<? extends DomainEntity> fEntity;
 	private final Class<? extends ICommand> fCommand;
+	private final Injector fInjector;
 
-	public GenericHandler(Class<? extends DomainEntity> entity, Class<? extends ICommand> command) {
+	public GenericHandler(Class<? extends DomainEntity> entity, Class<? extends ICommand> command, Injector injector) {
 		fCommand = command;
 		fEntity = entity;
+		fInjector = injector.createChildInjector(new EntityModule());
 	}
 	
-	@Override
-	public ICommand getCommand(Injector injector) {
-		injector = injector.createChildInjector(new EntityModule());
-		return injector.getInstance(fCommand);
+	private ICommand getCommand() {
+		return fInjector.getInstance(fCommand);
+	}
+	
+	public Fields executeCommand(Fields input) throws CommandException, ValidationException {
+		return getCommand().execute(input);
 	}
 
-	@Override
-	public List<IValidator> getValidators() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public List<IValidator> getValidators() {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 	
-	public class EntityModule extends AbstractModule {
+	private class EntityModule extends AbstractModule {
 
 		@Override
 		protected void configure() {

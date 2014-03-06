@@ -27,12 +27,9 @@
 
 package org.biokoframework.http.handler;
 
-import java.util.List;
-
-import org.biokoframework.system.command.ICommand;
-import org.biokoframework.system.service.validation.IValidator;
-
-import com.google.inject.Injector;
+import org.biokoframework.system.command.CommandException;
+import org.biokoframework.utils.exception.ValidationException;
+import org.biokoframework.utils.fields.Fields;
 
 /**
  * 
@@ -42,8 +39,8 @@ import com.google.inject.Injector;
  */
 public interface IHandler {
 
-	ICommand getCommand(Injector injector);
+//	ICommand getCommand(Injector injector);
 	
-	List<IValidator> getValidators();
+	Fields executeCommand(Fields input) throws CommandException, ValidationException;
 	
 }

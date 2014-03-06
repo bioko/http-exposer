@@ -28,7 +28,6 @@
 package org.biokoframework.http;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import javax.inject.Singleton;
 import javax.servlet.ServletConfig;
@@ -38,9 +37,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.input.AutoCloseInputStream;
 import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
 import org.biokoframework.http.exception.IExceptionResponseBuilder;
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.http.handler.IHandlerLocator;
@@ -131,7 +128,7 @@ public class BiokoServlet extends HttpServlet {
 			LOGGER.info("Before afterHandler");
 			
 			LOGGER.info("Before execute");
-			output = handler.getCommand(fInjector).execute(input);
+			output = handler.executeCommand(input);
 			LOGGER.info("After execute");
 			
 			fResponseBuilder.build(requestWrapper, response, input, output);
@@ -143,15 +140,15 @@ public class BiokoServlet extends HttpServlet {
 	}
 
 	private void loadLogProperties(String systemName) {
-		try {
-			InputStream log4jPromo = new AutoCloseInputStream(getClass().getClassLoader().getResourceAsStream("log4j-" + systemName + ".properties"));
-			if (log4jPromo != null) {
-				PropertyConfigurator.configure(log4jPromo);
-				log4jPromo.close();		
-			}
-		} catch (Exception exception) {
-			LOGGER.error("Load properties file for logger", exception);
-		}
+//		try {
+//			InputStream log4jPromo = new AutoCloseInputStream(getClass().getClassLoader().getResourceAsStream("log4j-" + systemName + ".properties"));
+//			if (log4jPromo != null) {
+//				PropertyConfigurator.configure(log4jPromo);
+//				log4jPromo.close();		
+//			}
+//		} catch (Exception exception) {
+//			LOGGER.error("Load properties file for logger", exception);
+//		}
 	}
 
 }

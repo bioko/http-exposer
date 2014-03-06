@@ -33,6 +33,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.biokoframework.http.handler.IHandler;
+import org.biokoframework.http.handler.impl.GenericHandler;
+import org.biokoframework.http.handler.impl.HandlerImpl;
 import org.biokoframework.http.mock.DummyEntity;
 import org.biokoframework.http.mock.MockCommand;
 import org.biokoframework.http.routing.IRoute;
@@ -40,12 +42,9 @@ import org.biokoframework.http.routing.impl.RouteImpl;
 import org.biokoframework.system.ConfigurationEnum;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.system.command.annotation.Command;
-import org.biokoframework.system.command.crud.CreateEntityCommand;
-import org.biokoframework.system.command.crud.DeleteEntityCommand;
-import org.biokoframework.system.command.crud.RetrieveEntityCommand;
-import org.biokoframework.system.command.crud.UpdateEntityCommand;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
 import org.biokoframework.system.repository.memory.InMemoryRepository;
+import org.biokoframework.system.services.entity.EntityModule;
 import org.biokoframework.system.services.repository.RepositoryModule;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,55 +64,56 @@ public class AnnotationHandlerLocatorTest {
 
 	@Test
 	public void simpleTest() throws Exception {
-		AnnotationHandlerLocator fLocator = new AnnotationHandlerLocator(Simple.class);
+		AnnotationHandlerLocator fLocator = new AnnotationHandlerLocator(Simple.class, fInjector);
 		
 		// Test first command
 		IRoute getRoute = new RouteImpl(HttpMethod.GET, "/" + Simple.SIMPLE_GET_COMMAND + "/", null);
 		IHandler handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(MockCommand.class)));
+		assertThat(handler, is(instanceOf(HandlerImpl.class)));
 		
 		// Test second command
 		IRoute postRoute = new RouteImpl(HttpMethod.POST, "/" + Simple.SIMPLE_POST_COMMAND + "/", null);
 		handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(MockCommand.class)));
+		assertThat(handler, is(instanceOf(HandlerImpl.class)));
 		
 	}
 	
 	@Test
 	public void crudTest() throws Exception {
-		AnnotationHandlerLocator fLocator = new AnnotationHandlerLocator(Crud.class);
+		AnnotationHandlerLocator fLocator = new AnnotationHandlerLocator(Crud.class, fInjector);
 		
 		// POST Test
 		IRoute postRoute = new RouteImpl(HttpMethod.POST, "/" + Crud.DUMMY_CRUD + "/", null);
 		IHandler handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(CreateEntityCommand.class)));
+		assertThat(handler, is(instanceOf(GenericHandler.class)));
 				
 		// GET Test
 		IRoute getRoute = new RouteImpl(HttpMethod.GET, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(RetrieveEntityCommand.class)));
+		assertThat(handler, is(instanceOf(GenericHandler.class)));
 		
 		// PUT Test
 		IRoute putRoute = new RouteImpl(HttpMethod.PUT, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(putRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(UpdateEntityCommand.class)));
+		assertThat(handler, is(instanceOf(GenericHandler.class)));
 		
 		// DELETE Test
 		IRoute deleteRoute = new RouteImpl(HttpMethod.DELETE, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(deleteRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler.getCommand(fInjector), is(instanceOf(DeleteEntityCommand.class)));
+		assertThat(handler, is(instanceOf(GenericHandler.class)));
 				
 	}
 		
 	@Before
 	public void createInjector() {
 		fInjector = Guice.createInjector(
+				new EntityModule(),
 				new RepositoryModule(ConfigurationEnum.DEV) {
 					@Override
 					protected void configureForDev() {
