@@ -32,6 +32,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.http.handler.impl.GenericHandler;
 import org.biokoframework.http.handler.impl.HandlerImpl;
@@ -44,13 +47,16 @@ import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.system.command.annotation.Command;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
 import org.biokoframework.system.repository.memory.InMemoryRepository;
+import org.biokoframework.system.services.authentication.IAuthenticationService;
 import org.biokoframework.system.services.entity.EntityModule;
 import org.biokoframework.system.services.repository.RepositoryModule;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -70,14 +76,12 @@ public class AnnotationHandlerLocatorTest {
 		IRoute getRoute = new RouteImpl(HttpMethod.GET, "/" + Simple.SIMPLE_GET_COMMAND + "/", null);
 		IHandler handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(HandlerImpl.class)));
-		
+
 		// Test second command
 		IRoute postRoute = new RouteImpl(HttpMethod.POST, "/" + Simple.SIMPLE_POST_COMMAND + "/", null);
 		handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(HandlerImpl.class)));
-		
+
 	}
 	
 	@Test
@@ -88,26 +92,22 @@ public class AnnotationHandlerLocatorTest {
 		IRoute postRoute = new RouteImpl(HttpMethod.POST, "/" + Crud.DUMMY_CRUD + "/", null);
 		IHandler handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(GenericHandler.class)));
-				
+
 		// GET Test
 		IRoute getRoute = new RouteImpl(HttpMethod.GET, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(GenericHandler.class)));
-		
+
 		// PUT Test
 		IRoute putRoute = new RouteImpl(HttpMethod.PUT, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(putRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(GenericHandler.class)));
-		
+
 		// DELETE Test
 		IRoute deleteRoute = new RouteImpl(HttpMethod.DELETE, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(deleteRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(GenericHandler.class)));
-				
+
 	}
 		
 	@Before
@@ -123,6 +123,13 @@ public class AnnotationHandlerLocatorTest {
 					protected void configureForDemo() { }
 					@Override
 					protected void configureForProd() { }
+				},
+				new AbstractModule() {
+					@Override
+					protected void configure() {
+						bind(new TypeLiteral<Set<IAuthenticationService>>(){})
+							.to(new TypeLiteral<HashSet<IAuthenticationService>>(){});
+					}
 				});
 	}
 	

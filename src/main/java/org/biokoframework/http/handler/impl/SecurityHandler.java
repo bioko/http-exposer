@@ -25,58 +25,50 @@
  * 
  */
 
+
 package org.biokoframework.http.handler.impl;
+
+import java.util.List;
 
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.system.KILL_ME.exception.SystemException;
-import org.biokoframework.system.command.ICommand;
-import org.biokoframework.utils.domain.DomainEntity;
+import org.biokoframework.system.services.authentication.AuthenticationFailureException;
+import org.biokoframework.system.services.authentication.IAuthenticationService;
+import org.biokoframework.system.services.authentication.all.AllAuthenticationService;
 import org.biokoframework.utils.exception.ValidationException;
 import org.biokoframework.utils.fields.Fields;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * 
  * @author Mikol Faro <mikol.faro@gmail.com>
- * @date Feb 16, 2014
+ * @date Mar 7, 2014
  *
  */
-public class GenericHandler implements IHandler {
-
-	private final Class<? extends DomainEntity> fEntity;
-	private final Class<? extends ICommand> fCommand;
-	private final Injector fInjector;
-
-	public GenericHandler(Class<? extends DomainEntity> entity, Class<? extends ICommand> command, Injector injector) {
-		fCommand = command;
-		fEntity = entity;
-		fInjector = injector.createChildInjector(new EntityModule());
-	}
+public class SecurityHandler implements IHandler {
 	
-	private ICommand getCommand() {
-		return fInjector.getInstance(fCommand);
+	private final IHandler fWrappedHandler;
+	private final List<String> fRequiredRoles;
+	private final IAuthenticationService fAuthService;
+	private final boolean fRequireValidAuthentication;
+
+	public SecurityHandler(IHandler wrappedHandler, List<String> requiredRoles, AllAuthenticationService authService, boolean requireValidAuthentication) {
+		fWrappedHandler = wrappedHandler;
+		fRequiredRoles = requiredRoles;
+		fAuthService = authService;
+		fRequireValidAuthentication = requireValidAuthentication;
 	}
-	
+
+	@Override
 	public Fields executeCommand(Fields input) throws SystemException, ValidationException {
-		return getCommand().execute(input);
-	}
-
-//	@Override
-//	public List<IValidator> getValidators() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-	
-	private class EntityModule extends AbstractModule {
-
-		@Override
-		protected void configure() {
-			bindConstant().annotatedWith(Names.named("entity")).to(fEntity);
+		try {
+			Fields authFields = fAuthService.authenticate(input, fRequiredRoles);
+			input.putAll(authFields);
+		} catch (AuthenticationFailureException exception) {
+			if (fRequireValidAuthentication) {
+				throw exception;
+			}
 		}
-
+		return fWrappedHandler.executeCommand(input);
 	}
 
 }

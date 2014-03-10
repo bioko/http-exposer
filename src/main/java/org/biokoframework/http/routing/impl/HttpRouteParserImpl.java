@@ -27,7 +27,12 @@
 
 package org.biokoframework.http.routing.impl;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.biokoframework.http.fields.IHttpFieldsParser;
@@ -47,10 +52,12 @@ import org.biokoframework.utils.fields.Fields;
 public class HttpRouteParserImpl implements IHttpRouteParser {
 
 	private final IHttpFieldsParser fFieldsParser;
+	private final Map<String, String> fHeadersMapping;
 	
 	@Inject
-	public HttpRouteParserImpl(IHttpFieldsParser fieldsParser) {
+	public HttpRouteParserImpl(IHttpFieldsParser fieldsParser, @Named("httpHeaderToFieldsMap") Map<String, String> headersMapping) {
 		fFieldsParser = fieldsParser;
+		fHeadersMapping = headersMapping;
 	}
 	
 	@Override
@@ -61,12 +68,23 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 	private Fields getFields(HttpServletRequest request) throws RouteNotSupportedException {
 		if (request.getContentLength() > 0) {
 			try {
-				return fFieldsParser.parse(request);
+				return fFieldsParser.parse(request).putAll(extractHeaders(request));
 			} catch (RequestNotSupportedException exception) {
 				throw new RouteNotSupportedException(exception);
 			}
 		}
 		return null;
+	}
+
+	private Fields extractHeaders(HttpServletRequest request) {
+		Fields headerFields = new Fields();
+		for (Entry<String, String> entry : fHeadersMapping.entrySet()) {
+			String value = request.getHeader(entry.getKey());
+			if (value != null) {
+				headerFields.put(entry.getValue(), value);
+			}
+		}
+		return headerFields;
 	}
 
 	private HttpMethod getMethod(HttpServletRequest request) throws RouteNotSupportedException {

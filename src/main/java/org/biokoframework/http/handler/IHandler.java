@@ -27,7 +27,7 @@
 
 package org.biokoframework.http.handler;
 
-import org.biokoframework.system.command.CommandException;
+import org.biokoframework.system.KILL_ME.exception.SystemException;
 import org.biokoframework.utils.exception.ValidationException;
 import org.biokoframework.utils.fields.Fields;
 
@@ -41,6 +41,6 @@ public interface IHandler {
 
 //	ICommand getCommand(Injector injector);
 	
-	Fields executeCommand(Fields input) throws CommandException, ValidationException;
+	Fields executeCommand(Fields input) throws SystemException, ValidationException;
 	
 }

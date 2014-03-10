@@ -25,58 +25,40 @@
  * 
  */
 
-package org.biokoframework.http.handler.impl;
+package org.biokoframework.http.services.authentication;
 
-import org.biokoframework.http.handler.IHandler;
-import org.biokoframework.system.KILL_ME.exception.SystemException;
-import org.biokoframework.system.command.ICommand;
-import org.biokoframework.utils.domain.DomainEntity;
-import org.biokoframework.utils.exception.ValidationException;
+import org.biokoframework.system.services.authentication.AuthenticationFailureException;
+import org.biokoframework.system.services.authentication.IAuthenticationStrategy;
 import org.biokoframework.utils.fields.Fields;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * 
  * @author Mikol Faro <mikol.faro@gmail.com>
- * @date Feb 16, 2014
+ * @date Feb 19, 2014
  *
  */
-public class GenericHandler implements IHandler {
+public abstract class HttpAuthenticationStrategy implements IAuthenticationStrategy {
 
-	private final Class<? extends DomainEntity> fEntity;
-	private final Class<? extends ICommand> fCommand;
-	private final Injector fInjector;
+	protected static final String HTTP_HEADERS = "httpHeaders";
+	protected static final String WWW_AUTHENTICATE = "WWW-Authenticate";
+	protected static final String AUTHORIZATION = "Authorization";
+	
+	private Fields fFields;
 
-	public GenericHandler(Class<? extends DomainEntity> entity, Class<? extends ICommand> command, Injector injector) {
-		fCommand = command;
-		fEntity = entity;
-		fInjector = injector.createChildInjector(new EntityModule());
+	@Override
+	public final Fields authenticate(Fields fields) throws AuthenticationFailureException {
+		fFields = fields;
+		return httpAuthenticate(fields);
 	}
 	
-	private ICommand getCommand() {
-		return fInjector.getInstance(fCommand);
+	protected abstract Fields httpAuthenticate(Fields fields) throws AuthenticationFailureException;
+
+	protected String getHeader(String httpHeaderName) {
+		return getHeaders().get(httpHeaderName);
+	}
+
+	protected Fields getHeaders() {
+		return fFields.get(HTTP_HEADERS);
 	}
 	
-	public Fields executeCommand(Fields input) throws SystemException, ValidationException {
-		return getCommand().execute(input);
-	}
-
-//	@Override
-//	public List<IValidator> getValidators() {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-	
-	private class EntityModule extends AbstractModule {
-
-		@Override
-		protected void configure() {
-			bindConstant().annotatedWith(Names.named("entity")).to(fEntity);
-		}
-
-	}
-
 }

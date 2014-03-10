@@ -32,6 +32,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.biokoframework.http.fields.IHttpFieldsParser;
@@ -63,7 +65,7 @@ public class HttpRouteParserImplTest {
 	@Before
 	public void createParser()  {
 		fMockFieldsParser = new MockFieldsParser();
-		fParser = new HttpRouteParserImpl(fMockFieldsParser);
+		fParser = new HttpRouteParserImpl(fMockFieldsParser, new HashMap<String, String>());
 	}
 
 	@Test

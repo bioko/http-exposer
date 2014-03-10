@@ -28,6 +28,10 @@
 package org.biokoframework.http.handler.annotation;
 
 import java.lang.reflect.Field;
+import java.nio.channels.AcceptPendingException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,6 +40,7 @@ import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.http.handler.impl.AbstractHandlerLocator;
 import org.biokoframework.http.handler.impl.GenericHandler;
 import org.biokoframework.http.handler.impl.HandlerImpl;
+import org.biokoframework.http.handler.impl.SecurityHandler;
 import org.biokoframework.http.routing.IRouteMatcher;
 import org.biokoframework.http.routing.impl.RouteMatcherImpl;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
@@ -47,6 +52,8 @@ import org.biokoframework.system.command.crud.RetrieveEntityCommand;
 import org.biokoframework.system.command.crud.UpdateEntityCommand;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
 import org.biokoframework.system.command.crud.binary.annotation.BlobCrudCommand;
+import org.biokoframework.system.services.authentication.all.AllAuthenticationService;
+import org.biokoframework.system.services.authentication.annotation.Auth;
 
 import com.google.inject.Injector;
 /**
@@ -59,10 +66,12 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 
 	private final Class<?> fCommandsClass;
 	private final Injector fInjector;
+	private final AllAuthenticationService fAuthService;
 
 	@Inject
 	public AnnotationHandlerLocator(@SuppressWarnings("rawtypes") @Named("Commands") Class commandsClass, Injector injector) {
 		fCommandsClass = commandsClass;
+		fAuthService = injector.getInstance(AllAuthenticationService.class);
 		fInjector = injector;
 		
 		for (Field aCandidateCommand : fCommandsClass.getFields()) {
@@ -84,7 +93,16 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 				basePath = "/" + basePath;
 			}
 			IRouteMatcher matcher = createRouteMatcher(annotation.rest(), basePath);
+			// TODO this should be injected as an enhancement to an handler
 			IHandler handler = createBasicHandler(annotation.impl());
+			
+			if (aCandidateCommand.isAnnotationPresent(Auth.class)) {
+				Auth auth = aCandidateCommand.getAnnotation(Auth.class);
+				handler = new SecurityHandler(handler, Arrays.asList(auth.roles()), fAuthService, true);
+			} else {
+				handler = new SecurityHandler(handler, Collections.<String>emptyList(), fAuthService, false);				
+			}
+			
 			addRoute(matcher, handler);
 		} catch (IllegalAccessException exception) {
 			// TODO handle exception
@@ -110,24 +128,44 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 			if (!basePath.contains("/{<\\d*>id}")) {
 				basePath = basePath + "/{<\\d*>id}";
 			}
+			
+			boolean mandatory = false;
+			List<String> roles = Collections.emptyList();
+			if (aCandidateCommand.isAnnotationPresent(Auth.class)) {
+				mandatory = true;
+				roles = Arrays.asList(aCandidateCommand.getAnnotation(Auth.class).roles());
+			}
+			
 			if (annotation.create()) {
 				IRouteMatcher matcher = createRouteMatcher(HttpMethod.POST, basePath);
 				IHandler handler = new GenericHandler(annotation.entity(), CreateEntityCommand.class, fInjector);
+				
+				handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
+				
 				addRoute(matcher, handler);
 			}
 			if (annotation.read()) {
 				IRouteMatcher matcher = createRouteMatcher(HttpMethod.GET, basePath);
 				IHandler handler = new GenericHandler(annotation.entity(), RetrieveEntityCommand.class, fInjector);
+			
+				handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
+				
 				addRoute(matcher, handler);
 			}
 			if (annotation.update()) {
 				IRouteMatcher matcher = createRouteMatcher(HttpMethod.PUT, basePath);
 				IHandler handler = new GenericHandler(annotation.entity(), UpdateEntityCommand.class, fInjector);
+				
+				handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
+				
 				addRoute(matcher, handler);
 			}
 			if (annotation.delete()) {
 				IRouteMatcher matcher = createRouteMatcher(HttpMethod.DELETE, basePath);
 				IHandler handler = new GenericHandler(annotation.entity(), DeleteEntityCommand.class, fInjector);
+
+				handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
+				
 				addRoute(matcher, handler);
 			}
 		} catch (IllegalAccessException exception) {
