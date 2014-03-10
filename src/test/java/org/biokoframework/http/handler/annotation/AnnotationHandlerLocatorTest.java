@@ -32,6 +32,9 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.http.handler.impl.GenericHandler;
 import org.biokoframework.http.handler.impl.HandlerImpl;
@@ -44,13 +47,16 @@ import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.system.command.annotation.Command;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
 import org.biokoframework.system.repository.memory.InMemoryRepository;
+import org.biokoframework.system.services.authentication.IAuthenticationService;
 import org.biokoframework.system.services.entity.EntityModule;
 import org.biokoframework.system.services.repository.RepositoryModule;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 
 /**
  * 
@@ -123,6 +129,13 @@ public class AnnotationHandlerLocatorTest {
 					protected void configureForDemo() { }
 					@Override
 					protected void configureForProd() { }
+				},
+				new AbstractModule() {
+					@Override
+					protected void configure() {
+						bind(new TypeLiteral<Set<IAuthenticationService>>(){})
+							.to(new TypeLiteral<HashSet<IAuthenticationService>>(){});
+					}
 				});
 	}
 	
