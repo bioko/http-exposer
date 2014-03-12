@@ -37,6 +37,8 @@ import org.biokoframework.http.mock.MockResponse;
 import org.biokoframework.utils.fields.Fields;
 import org.junit.Test;
 
+import java.util.Collections;
+
 /**
  * 
  * @author Mikol Faro <mikol.faro@gmail.com>
@@ -48,7 +50,7 @@ public class HttpResponseBuilderImplTest {
 	@Test
 	public void simpleTest() throws Exception {
 		
-		HttpResponseBuilderImpl builder = new HttpResponseBuilderImpl();
+		HttpResponseBuilderImpl builder = new HttpResponseBuilderImpl(Collections.<String, String>emptyMap());
 		
 		MockRequest httpRequest = new MockRequest("GET", "/something.json");
 		MockResponse httpResponse = new MockResponse();
@@ -69,5 +71,24 @@ public class HttpResponseBuilderImplTest {
 		assertThat(httpResponse.toString(), is(equalTo(response.toJSONString())));
 		
 	}
-	
+
+    @Test
+    public void headerTest() throws Exception {
+
+        HttpResponseBuilderImpl builder = new HttpResponseBuilderImpl(Collections.singletonMap("aField", "The-Header"));
+
+        MockRequest httpRequest = new MockRequest("GET", "/something.json");
+        MockResponse httpResponse = new MockResponse();
+
+        Fields input = new Fields();
+        Fields output = new Fields("aField", "hasAStringValue");
+
+        builder.build(httpRequest, httpResponse, input, output);
+
+        assertThat(httpResponse.getStatus(), is(200));
+        assertThat(httpResponse.getContentType(), is(equalTo("application/json; charset=utf-8")));
+        assertThat(httpResponse.getHeader("The-Header"), is(equalTo("hasAStringValue")));
+
+    }
+
 }
