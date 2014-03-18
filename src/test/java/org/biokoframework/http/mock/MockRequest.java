@@ -77,7 +77,7 @@ public class MockRequest implements HttpServletRequest {
 		fMethod = method;
 		fPath = path;
 		fContent = content;
-		fHeaders = new HashMap<String, String>();
+		fHeaders = new HashMap<>();
 	}
 	
 
@@ -93,6 +93,9 @@ public class MockRequest implements HttpServletRequest {
 	
 	@Override
 	public int getContentLength() {
+        if (fContent == null) {
+            return 0;
+        }
 		return fContent.length();
 	}
 

@@ -27,15 +27,6 @@
 
 package org.biokoframework.http.routing.impl;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
-import java.util.HashMap;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.mock.MockRequest;
 import org.biokoframework.http.routing.IRoute;
@@ -46,6 +37,14 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import javax.servlet.http.HttpServletRequest;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * 
@@ -60,7 +59,6 @@ public class HttpRouteParserImplTest {
 	
 	@Rule
 	public ExpectedException fExpected = ExpectedException.none();
-
 
 	@Before
 	public void createParser()  {
@@ -133,6 +131,26 @@ public class HttpRouteParserImplTest {
 		assertThat(route.getPath(), is(equalTo("/withField/")));
 		assertThat(fMockFieldsParser.wasCalledParse(), is(true));
 	}
+
+    @Test
+    public void parseWithHeaders() throws Exception {
+        Map<String, String > headersConversionMap = new HashMap<>();
+        headersConversionMap.put("An-Header", "anHeader");
+
+        fParser = new HttpRouteParserImpl(fMockFieldsParser, headersConversionMap);
+
+        MockRequest request = new MockRequest(HttpMethod.GET.toString(), "/url", null);
+        request.setHeader("An-Header", "aValue");
+
+        IRoute route = fParser.getRoute(request);
+        assertThat(route, is(notNullValue()));
+        assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
+        assertThat(route.getPath(), is(equalTo("/url/")));
+        assertThat(fMockFieldsParser.wasCalledParse(), is(false));
+        assertThat(route.getFields(), is(equalTo(new Fields(
+                "anHeader", "aValue"
+        ))));
+    }
 	
 	private static final class MockFieldsParser implements IHttpFieldsParser {
 
@@ -141,7 +159,7 @@ public class HttpRouteParserImplTest {
 		@Override
 		public Fields parse(HttpServletRequest request) {
 			fWasCalledParse = true;
-			return null;
+			return new Fields();
 		}
 		
 		public boolean wasCalledParse() {

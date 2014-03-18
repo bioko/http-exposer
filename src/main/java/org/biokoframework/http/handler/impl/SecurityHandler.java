@@ -28,15 +28,16 @@
 
 package org.biokoframework.http.handler.impl;
 
-import java.util.List;
-
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.system.KILL_ME.exception.SystemException;
+import org.biokoframework.system.services.authentication.AuthResponse;
 import org.biokoframework.system.services.authentication.AuthenticationFailureException;
 import org.biokoframework.system.services.authentication.IAuthenticationService;
 import org.biokoframework.system.services.authentication.all.AllAuthenticationService;
 import org.biokoframework.utils.exception.ValidationException;
 import org.biokoframework.utils.fields.Fields;
+
+import java.util.List;
 
 /**
  * 
@@ -60,15 +61,20 @@ public class SecurityHandler implements IHandler {
 
 	@Override
 	public Fields executeCommand(Fields input) throws SystemException, ValidationException {
+        AuthResponse authResponse = null;
 		try {
-			Fields authFields = fAuthService.authenticate(input, fRequiredRoles);
-			input.putAll(authFields);
+			authResponse = fAuthService.authenticate(input, fRequiredRoles);
+			input.putAll(authResponse.getMergeFields());
 		} catch (AuthenticationFailureException exception) {
 			if (fRequireValidAuthentication) {
 				throw exception;
 			}
 		}
-		return fWrappedHandler.executeCommand(input);
+        Fields output = fWrappedHandler.executeCommand(input);
+        if (authResponse != null && authResponse.getOverrideFields() != null) {
+            output.putAll(authResponse.getOverrideFields());
+        }
+		return output;
 	}
 
 }

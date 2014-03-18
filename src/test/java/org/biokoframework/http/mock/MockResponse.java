@@ -33,7 +33,9 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -52,6 +54,7 @@ public class MockResponse implements HttpServletResponse {
 	private String fCharset = Charset.defaultCharset().toString();
 	private MockSOS fOutputStream;
 	private StringWriter fStringWriter;
+    private Map<String, String> fHeadersMap = new HashMap<>();
 	private int fSC;
 
 	@Override
@@ -92,7 +95,17 @@ public class MockResponse implements HttpServletResponse {
 		return fSC;
 	}
 
-	@Override
+    @Override
+    public void setHeader(String name, String value) {
+        fHeadersMap.put(name, value);
+    }
+
+    @Override
+    public String getHeader(String name) {
+        return fHeadersMap.get(name);
+    }
+
+    @Override
 	public String toString() {
 		if (fOutputStream != null) {
 			return fOutputStream.toString();
@@ -106,7 +119,7 @@ public class MockResponse implements HttpServletResponse {
 
 	}
 
-	@Override
+    @Override
 	public PrintWriter getWriter() throws IOException {
 		if (fStringWriter == null) {
 			fStringWriter = new StringWriter();
@@ -247,11 +260,6 @@ public class MockResponse implements HttpServletResponse {
 	}
 
 	@Override
-	public void setHeader(String name, String value) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public void addHeader(String name, String value) {
 		throw new UnsupportedOperationException();
 	}
@@ -268,11 +276,6 @@ public class MockResponse implements HttpServletResponse {
 
 	@Override
 	public void setStatus(int sc, String sm) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getHeader(String name) {
 		throw new UnsupportedOperationException();
 	}
 

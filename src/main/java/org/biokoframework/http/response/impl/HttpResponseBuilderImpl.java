@@ -30,7 +30,10 @@ package org.biokoframework.http.response.impl;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.List;
+import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -53,6 +56,12 @@ public class HttpResponseBuilderImpl extends AbstractHttpResponseBuilder {
 
 	private static final String JSON_EXTENSION = "json";
 	private static final String APPLICATION_JSON = "application/json";
+    private final Map<String, String> fHeadersMapping;
+
+    @Inject
+    public HttpResponseBuilderImpl(@Named("fieldsHttpHeaderToMap") Map<String, String> headersMapping) {
+        fHeadersMapping = headersMapping;
+    }
 
 	@Override
 	protected void safelyBuild(HttpServletRequest request, HttpServletResponse response, Fields input, Fields output)
@@ -61,10 +70,15 @@ public class HttpResponseBuilderImpl extends AbstractHttpResponseBuilder {
 		response.setContentType(APPLICATION_JSON + withCharsetFrom(request));
 		
 		Object responseContent = output.get(GenericFieldNames.RESPONSE);
+
+        for (Map.Entry<String, String> entry : fHeadersMapping.entrySet()) {
+            if (output.containsKey(entry.getKey())) {
+                response.setHeader(entry.getValue(), output.get(entry.getKey()).toString());
+            }
+        }
 		
 		Writer writer = response.getWriter();
 		IOUtils.write(JSONValue.toJSONString(responseContent), writer);
-		
 	}
 	
 	@Override

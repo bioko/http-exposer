@@ -76,14 +76,12 @@ public class AnnotationHandlerLocatorTest {
 		IRoute getRoute = new RouteImpl(HttpMethod.GET, "/" + Simple.SIMPLE_GET_COMMAND + "/", null);
 		IHandler handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(HandlerImpl.class)));
-		
+
 		// Test second command
 		IRoute postRoute = new RouteImpl(HttpMethod.POST, "/" + Simple.SIMPLE_POST_COMMAND + "/", null);
 		handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(HandlerImpl.class)));
-		
+
 	}
 	
 	@Test
@@ -94,26 +92,22 @@ public class AnnotationHandlerLocatorTest {
 		IRoute postRoute = new RouteImpl(HttpMethod.POST, "/" + Crud.DUMMY_CRUD + "/", null);
 		IHandler handler = fLocator.getHandler(postRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(GenericHandler.class)));
-				
+
 		// GET Test
 		IRoute getRoute = new RouteImpl(HttpMethod.GET, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(getRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(GenericHandler.class)));
-		
+
 		// PUT Test
 		IRoute putRoute = new RouteImpl(HttpMethod.PUT, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(putRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(GenericHandler.class)));
-		
+
 		// DELETE Test
 		IRoute deleteRoute = new RouteImpl(HttpMethod.DELETE, "/" + Crud.DUMMY_CRUD + "/", null);
 		handler = fLocator.getHandler(deleteRoute);
 		assertThat(handler, is(notNullValue()));
-		assertThat(handler, is(instanceOf(GenericHandler.class)));
-				
+
 	}
 		
 	@Before

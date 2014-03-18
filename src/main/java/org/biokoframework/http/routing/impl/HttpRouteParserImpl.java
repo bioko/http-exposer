@@ -66,14 +66,15 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 	}
 
 	private Fields getFields(HttpServletRequest request) throws RouteNotSupportedException {
+        Fields headerFields = extractHeaders(request);
 		if (request.getContentLength() > 0) {
 			try {
-				return fFieldsParser.parse(request).putAll(extractHeaders(request));
+				return fFieldsParser.parse(request).putAll(headerFields);
 			} catch (RequestNotSupportedException exception) {
 				throw new RouteNotSupportedException(exception);
 			}
 		}
-		return null;
+		return headerFields;
 	}
 
 	private Fields extractHeaders(HttpServletRequest request) {
