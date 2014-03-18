@@ -73,7 +73,7 @@ public class SecurityHandler implements IHandler {
 		}
 
         Fields output = fWrappedHandler.executeCommand(input);
-        if (authResponse != null) {
+        if (authResponse != null && authResponse.getOverrideFields() != null) {
             output.putAll(authResponse.getOverrideFields());
         }
 		return output;
