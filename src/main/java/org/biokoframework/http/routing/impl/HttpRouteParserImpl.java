@@ -30,6 +30,8 @@ package org.biokoframework.http.routing.impl;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -53,11 +55,15 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 
 	private final IHttpFieldsParser fFieldsParser;
 	private final Map<String, String> fHeadersMapping;
-	
-	@Inject
+
+    private final Pattern fExtensionPattern;
+
+    @Inject
 	public HttpRouteParserImpl(IHttpFieldsParser fieldsParser, @Named("httpHeaderToFieldsMap") Map<String, String> headersMapping) {
 		fFieldsParser = fieldsParser;
 		fHeadersMapping = headersMapping;
+
+        fExtensionPattern = Pattern.compile("\\.[a-zA-Z0-9]+/$");
 	}
 	
 	@Override
@@ -100,9 +106,14 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 	private String getPath(HttpServletRequest request) {
 		String path = request.getPathInfo();
 		if (!path.endsWith("/")) {
-			return path + "/";
+            path = path + "/";
 		}
-		return path;
+
+        return trimExtension(path);
 	}
+
+    private String trimExtension(String path) {
+        return fExtensionPattern.matcher(path).replaceAll("/");
+    }
 
 }

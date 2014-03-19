@@ -52,7 +52,7 @@ public class HttpResponseBuilderImplTest {
 		
 		HttpResponseBuilderImpl builder = new HttpResponseBuilderImpl(Collections.<String, String>emptyMap());
 		
-		MockRequest httpRequest = new MockRequest("GET", "/something.json");
+		MockRequest httpRequest = new MockRequest("GET", "/something.json/");
 		MockResponse httpResponse = new MockResponse();
 		
 		Fields input = new Fields();
@@ -77,7 +77,7 @@ public class HttpResponseBuilderImplTest {
 
         HttpResponseBuilderImpl builder = new HttpResponseBuilderImpl(Collections.singletonMap("aField", "The-Header"));
 
-        MockRequest httpRequest = new MockRequest("GET", "/something.json");
+        MockRequest httpRequest = new MockRequest("GET", "/something.json/");
         MockResponse httpResponse = new MockResponse();
 
         Fields input = new Fields();

@@ -92,7 +92,7 @@ public class HttpResponseBuilderImpl extends AbstractHttpResponseBuilder {
 			throw new RequestNotSupportedException(entity);
 		} else if (acceptedTypes != null && !acceptedTypes.isEmpty()) {
 			for (String anAcceptedType : acceptedTypes) {
-				if (anAcceptedType.startsWith(APPLICATION_JSON)) {
+				if (anAcceptedType.startsWith(APPLICATION_JSON) || anAcceptedType.startsWith(JOLLY_TYPE)) {
 					return;
 				}
 			}

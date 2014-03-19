@@ -50,6 +50,8 @@ import org.biokoframework.utils.fields.Fields;
  */
 public abstract class AbstractHttpResponseBuilder implements IHttpResponseBuilder {
 
+    protected static final String JOLLY_TYPE = "*/*";
+
 	private static final String ACCEPT = "Accept";
 	private final Pattern fExtensionPattern = Pattern.compile("\\.([a-zA-Z0-9]+)$");
 	
