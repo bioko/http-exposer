@@ -27,17 +27,6 @@
 
 package org.biokoframework.http.exception.impl;
 
-import static org.biokoframework.utils.matcher.Matchers.matchesPattern;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.http.entity.ContentType;
 import org.biokoframework.http.mock.MockResponse;
 import org.biokoframework.system.command.CommandException;
@@ -47,6 +36,15 @@ import org.biokoframework.utils.fields.Fields;
 import org.json.simple.JSONValue;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.biokoframework.utils.matcher.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * 

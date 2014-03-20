@@ -27,10 +27,9 @@
 
 package org.biokoframework.http.exception;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
+import com.google.inject.AbstractModule;
+import com.google.inject.TypeLiteral;
+import com.google.inject.name.Names;
 import org.biokoframework.http.exception.impl.ExceptionResponseBuilderImpl;
 import org.biokoframework.http.routing.UnknownRouteException;
 import org.biokoframework.system.KILL_ME.exception.CommandNotFoundException;
@@ -42,9 +41,9 @@ import org.biokoframework.system.services.authentication.AuthenticationFailureEx
 import org.biokoframework.utils.exception.BiokoException;
 import org.biokoframework.utils.exception.ValidationException;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.TypeLiteral;
-import com.google.inject.name.Names;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 

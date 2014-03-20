@@ -27,13 +27,13 @@
 
 package org.biokoframework.http.fields.impl;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.utils.domain.ErrorEntity;
 import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 

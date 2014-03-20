@@ -27,16 +27,9 @@
 
 package org.biokoframework.http;
 
-import java.io.IOException;
-
-import javax.inject.Singleton;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.name.Names;
 import org.apache.log4j.Logger;
 import org.biokoframework.http.exception.IExceptionResponseBuilder;
 import org.biokoframework.http.handler.IHandler;
@@ -47,9 +40,14 @@ import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.system.ConfigurationEnum;
 import org.biokoframework.utils.fields.Fields;
 
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.name.Names;
+import javax.inject.Singleton;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Singleton
 @MultipartConfig

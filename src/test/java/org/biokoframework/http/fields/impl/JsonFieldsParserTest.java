@@ -27,11 +27,6 @@
 
 package org.biokoframework.http.fields.impl;
 
-import static org.biokoframework.utils.matcher.Matchers.matchesPattern;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import org.apache.http.entity.ContentType;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.mock.MockRequest;
@@ -39,6 +34,11 @@ import org.biokoframework.utils.fields.Fields;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import static org.biokoframework.utils.matcher.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * 

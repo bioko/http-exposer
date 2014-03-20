@@ -27,16 +27,15 @@
 
 package org.biokoframework.http.handler.impl;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Injector;
+import com.google.inject.name.Names;
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.system.KILL_ME.exception.SystemException;
 import org.biokoframework.system.command.ICommand;
 import org.biokoframework.utils.domain.DomainEntity;
 import org.biokoframework.utils.exception.ValidationException;
 import org.biokoframework.utils.fields.Fields;
-
-import com.google.inject.AbstractModule;
-import com.google.inject.Injector;
-import com.google.inject.name.Names;
 
 /**
  * 

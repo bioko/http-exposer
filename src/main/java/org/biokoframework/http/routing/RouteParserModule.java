@@ -27,11 +27,10 @@
 
 package org.biokoframework.http.routing;
 
+import com.google.inject.AbstractModule;
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.impl.JsonFieldsParser;
 import org.biokoframework.http.routing.impl.HttpRouteParserImpl;
-
-import com.google.inject.AbstractModule;
 
 /**
  * 

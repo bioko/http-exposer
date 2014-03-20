@@ -27,17 +27,16 @@
 
 package org.biokoframework.http.fields.impl;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.utils.fields.Fields;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 
 /**
  * 

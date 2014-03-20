@@ -27,9 +27,9 @@
 
 package org.biokoframework.http.fields;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.biokoframework.utils.fields.Fields;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 

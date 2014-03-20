@@ -27,9 +27,8 @@
 
 package org.biokoframework.http.response;
 
-import org.biokoframework.http.response.impl.HttpResponseBuilderImpl;
-
 import com.google.inject.AbstractModule;
+import org.biokoframework.http.response.impl.HttpResponseBuilderImpl;
 
 /**
  * 

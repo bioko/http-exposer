@@ -27,11 +27,10 @@
 
 package org.biokoframework.http.exception;
 
-import java.io.IOException;
+import org.biokoframework.utils.fields.Fields;
 
 import javax.servlet.http.HttpServletResponse;
-
-import org.biokoframework.utils.fields.Fields;
+import java.io.IOException;
 
 /**
  * 

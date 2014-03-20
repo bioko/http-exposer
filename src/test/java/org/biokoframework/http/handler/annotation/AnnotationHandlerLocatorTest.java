@@ -27,17 +27,11 @@
 
 package org.biokoframework.http.handler.annotation;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
-
-import java.util.HashSet;
-import java.util.Set;
-
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import com.google.inject.TypeLiteral;
 import org.biokoframework.http.handler.IHandler;
-import org.biokoframework.http.handler.impl.GenericHandler;
-import org.biokoframework.http.handler.impl.HandlerImpl;
 import org.biokoframework.http.mock.DummyEntity;
 import org.biokoframework.http.mock.MockCommand;
 import org.biokoframework.http.routing.IRoute;
@@ -53,10 +47,12 @@ import org.biokoframework.system.services.repository.RepositoryModule;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.TypeLiteral;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 /**
  * 

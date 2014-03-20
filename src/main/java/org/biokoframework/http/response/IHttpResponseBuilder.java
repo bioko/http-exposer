@@ -27,13 +27,12 @@
 
 package org.biokoframework.http.response;
 
-import java.io.IOException;
+import org.biokoframework.http.fields.RequestNotSupportedException;
+import org.biokoframework.utils.fields.Fields;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.biokoframework.http.fields.RequestNotSupportedException;
-import org.biokoframework.utils.fields.Fields;
+import java.io.IOException;
 
 /**
  * 

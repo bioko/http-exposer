@@ -28,16 +28,16 @@
 
 package org.biokoframework.http.response.impl;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-
 import org.biokoframework.http.mock.MockRequest;
 import org.biokoframework.http.mock.MockResponse;
 import org.biokoframework.utils.fields.Fields;
 import org.junit.Test;
 
 import java.util.Collections;
+
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 
 /**
  * 

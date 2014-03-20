@@ -27,16 +27,6 @@
 
 package org.biokoframework.http.routing.impl;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
-
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.routing.IHttpRouteParser;
@@ -44,6 +34,13 @@ import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.RouteNotSupportedException;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
 import org.biokoframework.utils.fields.Fields;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /**
  * 

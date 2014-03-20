@@ -27,15 +27,7 @@
 
 package org.biokoframework.http.handler.annotation;
 
-import java.lang.reflect.Field;
-import java.nio.channels.AcceptPendingException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-
+import com.google.inject.Injector;
 import org.biokoframework.http.handler.IHandler;
 import org.biokoframework.http.handler.impl.AbstractHandlerLocator;
 import org.biokoframework.http.handler.impl.GenericHandler;
@@ -55,7 +47,12 @@ import org.biokoframework.system.command.crud.binary.annotation.BlobCrudCommand;
 import org.biokoframework.system.services.authentication.all.AllAuthenticationService;
 import org.biokoframework.system.services.authentication.annotation.Auth;
 
-import com.google.inject.Injector;
+import javax.inject.Inject;
+import javax.inject.Named;
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 /**
  * 
  * @author Mikol Faro <mikol.faro@gmail.com>

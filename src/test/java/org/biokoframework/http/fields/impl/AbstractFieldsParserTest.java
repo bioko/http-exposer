@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014																 
+ * Copyright (c) 2014
  *	Mikol Faro			<mikol.faro@gmail.com>
  *	Simone Mangano		<simone.mangano@ieee.org>
  *	Mattia Tortorelli	<mattia.tortorelli@gmail.com>
@@ -28,18 +28,15 @@
 
 package org.biokoframework.http.fields.impl;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.hamcrest.Matchers.theInstance;
-import static org.junit.Assert.assertThat;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.mock.MockRequest;
 import org.biokoframework.utils.fields.Fields;
 import org.junit.Test;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 /**
  * 

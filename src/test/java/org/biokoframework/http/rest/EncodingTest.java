@@ -27,9 +27,9 @@
 
 package org.biokoframework.http.rest;
 
-import java.nio.charset.Charset;
-
 import org.junit.Test;
+
+import java.nio.charset.Charset;
 
 public class EncodingTest {
 

@@ -27,11 +27,6 @@
 
 package org.biokoframework.http.routing.impl;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertThat;
-
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.IRouteMatcher;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
@@ -40,6 +35,9 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
 public class RouteMatcherImplTest {
 

@@ -27,6 +27,8 @@
 
 package org.biokoframework.http.services.authentication.basic;
 
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import org.apache.commons.codec.binary.Base64;
 import org.biokoframework.http.services.authentication.HttpAuthenticationStrategy;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
@@ -35,9 +37,6 @@ import org.biokoframework.system.exceptions.CommandExceptionsFactory;
 import org.biokoframework.system.services.authentication.AuthenticationFailureException;
 import org.biokoframework.utils.fields.Fields;
 import org.biokoframework.utils.repository.Repository;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  * 
