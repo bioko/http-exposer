@@ -31,8 +31,8 @@ import com.google.inject.name.Names;
 import org.apache.log4j.Logger;
 import org.biokoframework.system.ConfigurationEnum;
 
-import javax.servlet.ServletContext;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -46,10 +46,16 @@ public abstract class HttpSystemMainModule extends AbstractModule {
     private Properties fLoadedProperties;
     private final ConfigurationEnum fConfig;
 
-    public HttpSystemMainModule(ServletContext context) {
+    public HttpSystemMainModule() {
         try {
             fLoadedProperties = new Properties();
-            fLoadedProperties.load(context.getResourceAsStream("/WEB-INF/classes/system.properties"));
+
+            ClassLoader loader = Thread.currentThread().getContextClassLoader();
+            // Location based on WAR
+            InputStream stream = loader.getResourceAsStream("system.properties");
+            fLoadedProperties.load(stream);
+
+            stream.close();
         } catch (IOException exception) {
             LOGGER.fatal("Cannot load 'system.properties", exception);
             throw new RuntimeException("Cannot load 'system.properties", exception);
@@ -60,6 +66,8 @@ public abstract class HttpSystemMainModule extends AbstractModule {
     @Override
     protected final void configure() {
         bind(ConfigurationEnum.class).toInstance(fConfig);
+
+        Names.bindProperties(binder(), fLoadedProperties);
         configureProperties();
 
         configureMain();
