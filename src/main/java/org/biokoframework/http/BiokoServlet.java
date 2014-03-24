@@ -121,14 +121,14 @@ public class BiokoServlet extends HttpServlet {
 			IRoute route = fRequestParser.getRoute(requestWrapper);
 			input = route.getFields();
 
-			LOGGER.info("Before getHandler");
+			LOGGER.debug("Before getHandler");
 			IHandler handler = fLocator.getHandler(route);
-			LOGGER.info("Before afterHandler");
-			
-			LOGGER.info("Before execute");
+            LOGGER.debug("After getHandler");
+
+            LOGGER.debug("Before execute");
 			output = handler.executeCommand(input);
-			LOGGER.info("After execute");
-			
+            LOGGER.debug("After execute");
+
 			fResponseBuilder.build(requestWrapper, response, input, output);
 
 		} catch (Exception exception) {
