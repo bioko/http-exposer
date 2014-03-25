@@ -28,7 +28,7 @@
 package org.biokoframework.http.response;
 
 import com.google.inject.AbstractModule;
-import org.biokoframework.http.response.impl.HttpResponseBuilderImpl;
+import org.biokoframework.http.response.impl.JsonResponseBuilderImpl;
 
 /**
  * 
@@ -40,7 +40,7 @@ public class ResponseBuilderModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-		bind(IHttpResponseBuilder.class).to(HttpResponseBuilderImpl.class);
+		bind(IHttpResponseBuilder.class).to(JsonResponseBuilderImpl.class);
 	}
 
 }

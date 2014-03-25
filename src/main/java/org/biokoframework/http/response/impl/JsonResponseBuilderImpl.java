@@ -51,14 +51,14 @@ import java.util.Map;
  * @date Feb 26, 2014
  *
  */
-public class HttpResponseBuilderImpl extends AbstractHttpResponseBuilder {
+public class JsonResponseBuilderImpl extends AbstractHttpResponseBuilder {
 
 	private static final String JSON_EXTENSION = "json";
 	private static final String APPLICATION_JSON = "application/json";
     private final Map<String, String> fHeadersMapping;
 
     @Inject
-    public HttpResponseBuilderImpl(@Named("fieldsHttpHeaderToMap") Map<String, String> headersMapping) {
+    public JsonResponseBuilderImpl(@Named("fieldsHttpHeaderToMap") Map<String, String> headersMapping) {
         fHeadersMapping = headersMapping;
     }
 

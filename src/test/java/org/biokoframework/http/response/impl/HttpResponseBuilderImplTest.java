@@ -50,7 +50,7 @@ public class HttpResponseBuilderImplTest {
 	@Test
 	public void simpleTest() throws Exception {
 		
-		HttpResponseBuilderImpl builder = new HttpResponseBuilderImpl(Collections.<String, String>emptyMap());
+		JsonResponseBuilderImpl builder = new JsonResponseBuilderImpl(Collections.<String, String>emptyMap());
 		
 		MockRequest httpRequest = new MockRequest("GET", "/something.json/");
 		MockResponse httpResponse = new MockResponse();
@@ -75,7 +75,7 @@ public class HttpResponseBuilderImplTest {
     @Test
     public void headerTest() throws Exception {
 
-        HttpResponseBuilderImpl builder = new HttpResponseBuilderImpl(Collections.singletonMap("aField", "The-Header"));
+        JsonResponseBuilderImpl builder = new JsonResponseBuilderImpl(Collections.singletonMap("aField", "The-Header"));
 
         MockRequest httpRequest = new MockRequest("GET", "/something.json/");
         MockResponse httpResponse = new MockResponse();
