@@ -52,7 +52,10 @@ public class JsonFieldsParser extends AbstractFieldsParser {
 	public Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {		
 		Reader reader;
 		try {
-			reader = request.getReader();
+            if (request.getCharacterEncoding() == null) {
+                request.setCharacterEncoding("utf-8");
+            }
+            reader = request.getReader();
 			Writer writer = new StringWriter();
 			IOUtils.copy(reader, writer);
 			return Fields.fromJson(writer.toString());
