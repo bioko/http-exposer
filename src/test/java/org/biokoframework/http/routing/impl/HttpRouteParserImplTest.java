@@ -39,6 +39,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -149,6 +150,29 @@ public class HttpRouteParserImplTest {
         assertThat(route.getFields(), is(equalTo(new Fields(
                 "anHeader", "aValue"
         ))));
+    }
+
+    @Test
+    public void parseWithQueryString() throws Exception {
+        fParser = new HttpRouteParserImpl(fMockFieldsParser, Collections.<String, String>emptyMap());
+
+        MockRequest request = new MockRequest(HttpMethod.GET.toString(), "/url?gino=pino", null);
+
+        IRoute route = fParser.getRoute(request);
+        assertThat(route, is(notNullValue()));
+        assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
+        assertThat(route.getPath(), is(equalTo("/url/")));
+        assertThat(fMockFieldsParser.wasCalledParse(), is(false));
+        assertThat(route.getFields(), is(equalTo(new Fields("gino", "pino"))));
+
+        request = new MockRequest(HttpMethod.GET.toString(), "/url/?gino=pino", null);
+
+        route = fParser.getRoute(request);
+        assertThat(route, is(notNullValue()));
+        assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
+        assertThat(route.getPath(), is(equalTo("/url/")));
+        assertThat(fMockFieldsParser.wasCalledParse(), is(false));
+        assertThat(route.getFields(), is(equalTo(new Fields("gino", "pino"))));
     }
 
     @Test

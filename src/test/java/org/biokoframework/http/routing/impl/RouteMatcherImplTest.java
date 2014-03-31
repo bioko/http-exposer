@@ -61,7 +61,6 @@ public class RouteMatcherImplTest {
 		
 		route = new RouteImpl(HttpMethod.PUT, "/simple-post-command", new Fields());
 		assertThat(matcher, not(matches(route)));
-		
 	}
 	
 	@Test
@@ -75,16 +74,12 @@ public class RouteMatcherImplTest {
 		route = new RouteImpl(HttpMethod.GET, "/simple-get-command/43", new Fields());
 		assertThat(matcher, matches(route));
 		assertThat(route.getFields(), is(not(empty())));
-		assertThat(route.getFields(), contains(
-					"param", "43"
-				));
+		assertThat(route.getFields(), contains("param", "43"));
 		
 		route = new RouteImpl(HttpMethod.GET, "/simple-get-command/theValue", new Fields());
 		assertThat(matcher, matches(route));
 		assertThat(route.getFields(), is(not(empty())));
-		assertThat(route.getFields(), contains(
-					"param", "theValue"
-				));
+		assertThat(route.getFields(), contains("param", "theValue"));
 	}
 	
 	@Test

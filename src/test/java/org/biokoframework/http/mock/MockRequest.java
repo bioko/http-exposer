@@ -50,8 +50,8 @@ public class MockRequest implements HttpServletRequest {
 	private String fType;
 	private Map<String, String> fHeaders;
 	private String fCharacterEncoding;
-	
-	public MockRequest(String method, String path) {
+
+    public MockRequest(String method, String path) {
 		this(method, path, "");
 	}
 	
@@ -120,8 +120,13 @@ public class MockRequest implements HttpServletRequest {
 	public String getHeader(String name) {
 		return fHeaders.get(name);
 	}
-	
-	private static final class MOCSIS extends ServletInputStream {
+
+    @Override
+    public String getQueryString() {
+        return getPathInfo().replaceAll(".*\\?", "");
+    }
+
+    private static final class MOCSIS extends ServletInputStream {
 
 		private ByteArrayInputStream fIS;
 
@@ -348,11 +353,6 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public String getContextPath() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public String getQueryString() {
 		throw new UnsupportedOperationException();
 	}
 

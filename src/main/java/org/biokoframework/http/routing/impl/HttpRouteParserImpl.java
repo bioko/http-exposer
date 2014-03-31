@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.routing.impl;
 
+import org.apache.log4j.Logger;
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.routing.IHttpRouteParser;
@@ -38,6 +39,8 @@ import org.biokoframework.utils.fields.Fields;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
@@ -50,10 +53,13 @@ import java.util.regex.Pattern;
  */
 public class HttpRouteParserImpl implements IHttpRouteParser {
 
-	private final IHttpFieldsParser fFieldsParser;
+    private static final Logger LOGGER = Logger.getLogger(HttpRouteParserImpl.class);
+
+    private final IHttpFieldsParser fFieldsParser;
 	private final Map<String, String> fHeadersMapping;
 
     private final Pattern fExtensionPattern;
+    private final Pattern fQueryStringPattern;
 
     @Inject
 	public HttpRouteParserImpl(IHttpFieldsParser fieldsParser, @Named("httpHeaderToFieldsMap") Map<String, String> headersMapping) {
@@ -61,6 +67,7 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 		fHeadersMapping = headersMapping;
 
         fExtensionPattern = Pattern.compile("\\.[a-zA-Z0-9]+/$");
+        fQueryStringPattern = Pattern.compile("/?\\?.*$");
 	}
 	
 	@Override
@@ -69,18 +76,35 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 	}
 
 	private Fields getFields(HttpServletRequest request) throws RouteNotSupportedException {
-        Fields headerFields = extractHeaders(request);
+        Fields headersFields = extractHeaders(request);
+        headersFields.putAll(extractQueryString(request));
 		if (request.getContentLength() > 0) {
 			try {
-				return fFieldsParser.parse(request).putAll(headerFields);
+				return fFieldsParser.parse(request).putAll(headersFields);
 			} catch (RequestNotSupportedException exception) {
 				throw new RouteNotSupportedException(exception);
 			}
 		}
-		return headerFields;
+		return headersFields;
 	}
 
-	private Fields extractHeaders(HttpServletRequest request) {
+    private Fields extractQueryString(HttpServletRequest request) {
+        Fields queryStringFields = new Fields();
+
+        try {
+            for (String aQuery : request.getQueryString().split("\\?")) {
+                String[] splittedQuery = aQuery.split("=");
+                queryStringFields.put(URLDecoder.decode(splittedQuery[0], "utf8"), URLDecoder.decode(splittedQuery[1], "utf8"));
+            }
+            request.getQueryString();
+        } catch (UnsupportedEncodingException exception) {
+            LOGGER.error("Unsupported encoding", exception);
+        }
+
+        return queryStringFields;
+    }
+
+    private Fields extractHeaders(HttpServletRequest request) {
 		Fields headerFields = new Fields();
 		for (Entry<String, String> entry : fHeadersMapping.entrySet()) {
 			String value = request.getHeader(entry.getKey());
@@ -106,8 +130,12 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
             path = path + "/";
 		}
 
-        return trimExtension(path);
+        return trimExtension(trimQueryString(path));
 	}
+
+    private String trimQueryString(String path) {
+        return fQueryStringPattern.matcher(path).replaceAll("/");
+    }
 
     private String trimExtension(String path) {
         return fExtensionPattern.matcher(path).replaceAll("/");
