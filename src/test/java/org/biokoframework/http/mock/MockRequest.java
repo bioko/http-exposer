@@ -123,7 +123,10 @@ public class MockRequest implements HttpServletRequest {
 
     @Override
     public String getQueryString() {
-        return getPathInfo().replaceAll(".*\\?", "");
+        if (getPathInfo().contains("?")) {
+            return getPathInfo().replaceAll(".*\\?", "");
+        }
+        return null;
     }
 
     private static final class MOCSIS extends ServletInputStream {

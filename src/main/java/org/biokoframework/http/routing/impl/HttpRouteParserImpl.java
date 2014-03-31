@@ -91,14 +91,18 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
     private Fields extractQueryString(HttpServletRequest request) {
         Fields queryStringFields = new Fields();
 
-        try {
-            for (String aQuery : request.getQueryString().split("\\?")) {
-                String[] splittedQuery = aQuery.split("=");
-                queryStringFields.put(URLDecoder.decode(splittedQuery[0], "utf8"), URLDecoder.decode(splittedQuery[1], "utf8"));
+        String queryString = request.getQueryString();
+
+        if (queryString != null) {
+            try {
+                for (String aQuery : queryString.split("&")) {
+                    String[] splittedQuery = aQuery.split("=");
+                    queryStringFields.put(URLDecoder.decode(splittedQuery[0], "utf8"), URLDecoder.decode(splittedQuery[1], "utf8"));
+                }
+                request.getQueryString();
+            } catch (UnsupportedEncodingException exception) {
+                LOGGER.error("Unsupported encoding", exception);
             }
-            request.getQueryString();
-        } catch (UnsupportedEncodingException exception) {
-            LOGGER.error("Unsupported encoding", exception);
         }
 
         return queryStringFields;
