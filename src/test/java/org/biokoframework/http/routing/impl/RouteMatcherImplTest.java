@@ -36,6 +36,9 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 
+
+import static org.biokoframework.utils.matcher.Matchers.empty;
+import static org.biokoframework.utils.matcher.Matchers.contains;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
@@ -93,37 +96,10 @@ public class RouteMatcherImplTest {
 		route = new RouteImpl(HttpMethod.GET, "/dummy-crud/43", new Fields());
 		assertThat(matcher, matches(route));
 		assertThat(route.getFields(), is(not(empty())));
-		assertThat(route.getFields(), contains(
-					"id", "43"
-				));
+		assertThat(route.getFields(), contains("id", "43"));
 		
 		route = new RouteImpl(HttpMethod.GET, "/dummy-crud/NaN", new Fields());
 		assertThat(matcher, not(matches(route)));
-	}
-
-	
-	private Matcher<Fields> contains(Object... keysAndValues) {
-		return is(equalTo(new Fields(keysAndValues)));
-	}
-	
-	// TODO move to utils
-	private Matcher<Fields> empty() {
-		return new Empty();
-	}
-
-	// TODO move to utils
-	private class Empty extends TypeSafeMatcher<Fields> {
-
-		@Override
-		public void describeTo(Description description) {
-			description.appendText("empty");
-		}
-
-		@Override
-		protected boolean matchesSafely(Fields item) {
-			return item.isEmpty();
-		}
-		
 	}
 	
 	private Matcher<IRouteMatcher> matches(IRoute route) {
