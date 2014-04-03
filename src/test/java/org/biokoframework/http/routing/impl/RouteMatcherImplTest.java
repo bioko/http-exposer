@@ -36,10 +36,10 @@ import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
 import org.junit.Test;
 
-
-import static org.biokoframework.utils.matcher.Matchers.empty;
 import static org.biokoframework.utils.matcher.Matchers.contains;
-import static org.hamcrest.Matchers.*;
+import static org.biokoframework.utils.matcher.Matchers.empty;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertThat;
 
 public class RouteMatcherImplTest {
