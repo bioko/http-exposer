@@ -78,6 +78,7 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 	private Fields getFields(HttpServletRequest request) throws RouteNotSupportedException {
         Fields headersFields = extractHeaders(request);
         headersFields.putAll(extractQueryString(request));
+
 		if (request.getContentLength() > 0) {
 			try {
 				return fFieldsParser.parse(request).putAll(headersFields);
