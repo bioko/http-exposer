@@ -27,8 +27,8 @@
 
 package org.biokoframework.http.response.impl;
 
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.response.IHttpResponseBuilder;
 import org.biokoframework.utils.fields.Fields;
