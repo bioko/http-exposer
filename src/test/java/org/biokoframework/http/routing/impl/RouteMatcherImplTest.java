@@ -123,6 +123,6 @@ public class RouteMatcherImplTest {
 		protected boolean matchesSafely(IRouteMatcher item) {
 			return item.matches(fRoute);
 		}
-	};
+	}
 	
 }
