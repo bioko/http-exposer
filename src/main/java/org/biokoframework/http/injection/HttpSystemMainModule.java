@@ -43,24 +43,29 @@ public abstract class HttpSystemMainModule extends AbstractModule {
 
     private static final Logger LOGGER = Logger.getLogger(HttpSystemMainModule.class);
 
-    private Properties fLoadedProperties;
+    private final Properties fLoadedProperties;
     private final ConfigurationEnum fConfig;
 
     public HttpSystemMainModule() {
+        fLoadedProperties = loadProperties();
+        fConfig = ConfigurationEnum.valueOf((String) fLoadedProperties.get("config"));
+    }
+
+    protected Properties loadProperties() {
+        Properties properties = new Properties();
         try {
-            fLoadedProperties = new Properties();
 
             ClassLoader loader = Thread.currentThread().getContextClassLoader();
             // Location based on WAR
             InputStream stream = loader.getResourceAsStream("system.properties");
-            fLoadedProperties.load(stream);
+            properties.load(stream);
 
             stream.close();
         } catch (IOException exception) {
             LOGGER.fatal("Cannot load 'system.properties", exception);
             throw new RuntimeException("Cannot load 'system.properties", exception);
         }
-        fConfig = ConfigurationEnum.valueOf((String) fLoadedProperties.get("config"));
+        return properties;
     }
 
     @Override
