@@ -3,36 +3,25 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.biokoframework</groupId>
     <artifactId>http-exposer</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.1</version>
     <name>Bioko Framework - HttpExposer</name>
     <url>http://biokoframework.org</url>
     <dependencies>
         <dependency>
             <groupId>org.biokoframework</groupId>
             <artifactId>utils</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>org.biokoframework</groupId>
             <artifactId>system</artifactId>
-            <version>0.1-SNAPSHOT</version>
+            <version>0.1</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>commons-httpclient</groupId>-->
-            <!--<artifactId>commons-httpclient</artifactId>-->
-            <!--<version>3.1</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>commons-fileupload</groupId>-->
-            <!--<artifactId>commons-fileupload</artifactId>-->
-            <!--<version>1.3</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>commons-io</groupId>
