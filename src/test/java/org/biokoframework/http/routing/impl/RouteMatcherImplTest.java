@@ -101,7 +101,25 @@ public class RouteMatcherImplTest {
 		route = new RouteImpl(HttpMethod.GET, "/dummy-crud/NaN", new Fields());
 		assertThat(matcher, not(matches(route)));
 	}
-	
+
+    @Test
+    public void testWithCatchAllForOptions() {
+        RouteMatcherImpl matcher = new RouteMatcherImpl(HttpMethod.OPTIONS, "/{<.*>command}");
+
+        IRoute route = new RouteImpl(HttpMethod.OPTIONS, "/dummy-crud/43", new Fields());
+        assertThat(matcher, matches(route));
+        assertThat(route.getFields(), is(not(empty())));
+        assertThat(route.getFields(), contains("command", "dummy-crud/43"));
+
+        route = new RouteImpl(HttpMethod.OPTIONS, "/dummy-crud/NaN", new Fields());
+        assertThat(matcher, matches(route));
+        assertThat(route.getFields(), is(not(empty())));
+        assertThat(route.getFields(), contains("command", "dummy-crud/NaN"));
+
+        route = new RouteImpl(HttpMethod.GET, "/dummy-crud/", new Fields());
+        assertThat(matcher, not(matches(route)));
+    }
+
 	private Matcher<IRouteMatcher> matches(IRoute route) {
 		return new RouteMatches(route);
 	}
