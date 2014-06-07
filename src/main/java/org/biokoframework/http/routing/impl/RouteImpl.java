@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.routing.impl;
 
+import com.google.common.base.Objects;
 import org.apache.commons.lang3.ObjectUtils;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
@@ -71,4 +72,12 @@ public class RouteImpl implements IRoute {
 		fFields.putAll(parameters);
 	}
 
+    @Override
+    public String toString() {
+        return Objects
+                .toStringHelper(RouteImpl.class)
+                .add("method", fHttpMethod)
+                .add("path", fPath)
+                .toString();
+    }
 }

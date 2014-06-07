@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.routing.impl;
 
+import com.google.common.base.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.IRouteMatcher;
@@ -109,5 +110,13 @@ public class RouteMatcherImpl implements IRouteMatcher {
 		return "(" + StringUtils.defaultIfEmpty(paramRegexp, "[^\\{\\}/\\.]*") + ")";
 	}
 
-
+    @Override
+    public String toString() {
+        return Objects
+                .toStringHelper(RouteMatcherImpl.class)
+                .add("method", fMethod)
+                .add("routePattern", fRoutePattern)
+                .add("parameterPatterns", fParameterPattern)
+                .toString();
+    }
 }
