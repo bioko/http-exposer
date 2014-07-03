@@ -54,14 +54,13 @@ public abstract class AbstractHandlerLocator implements IHandlerLocator {
 	
 	@Override
 	public IHandler getHandler(IRoute route) throws UnknownRouteException {
-		LOGGER.info("Start searching");
 		for (Entry<IRouteMatcher, IHandler> anEntry : fRoutes) {
 			if (anEntry.getKey().matches(route)) {
 				return anEntry.getValue();
 			}
 		}
-		LOGGER.info("End searching");
-		
+
+        LOGGER.error("Route " + route + " not matched.");
 		throw createUnknownRoute(route);
 	}
 
