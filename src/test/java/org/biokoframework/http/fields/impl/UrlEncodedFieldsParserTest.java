@@ -26,7 +26,7 @@ public class UrlEncodedFieldsParserTest {
         UrlEncodedFieldsParser parser = new UrlEncodedFieldsParser();
 
         MockRequest request = new MockRequest("POST", "/something", "name=Rita&surname=Mamma&company=Pizzeria+Mamma+Rita");
-        request.setContentType("x-www-form-urlencoded");
+        request.setContentType("application/x-www-form-urlencoded");
 
         Fields expected = new Fields(
                 "name", "Rita",

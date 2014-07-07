@@ -16,7 +16,7 @@ import java.net.URLDecoder;
  */
 public class UrlEncodedFieldsParser extends AbstractFieldsParser {
 
-    public static final String X_WWW_FORM_URLENCODED = "x-www-form-urlencoded";
+    public static final String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 
     @Override
     protected Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {
