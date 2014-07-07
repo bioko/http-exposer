@@ -29,10 +29,7 @@ package org.biokoframework.http.mock;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.security.Principal;
 import java.util.*;
 
@@ -83,9 +80,13 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
-		return new MOCSIS(fContent.getBytes());
+		return new MockServletIS(fContent.getBytes());
 	}
-	
+
+    @Override
+    public BufferedReader getReader() throws IOException {
+        return new BufferedReader(new StringReader(fContent));
+    }
 
 	@Override
 	public String getMethod() {
@@ -129,11 +130,11 @@ public class MockRequest implements HttpServletRequest {
         return null;
     }
 
-    private static final class MOCSIS extends ServletInputStream {
+    private static final class MockServletIS extends ServletInputStream {
 
 		private ByteArrayInputStream fIS;
 
-		public MOCSIS(byte[] bytes) {
+		public MockServletIS(byte[] bytes) {
 			fIS = new ByteArrayInputStream(bytes);
 		}
 
@@ -211,11 +212,6 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public int getServerPort() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public BufferedReader getReader() throws IOException {
 		throw new UnsupportedOperationException();
 	}
 

@@ -51,6 +51,7 @@ public class JsonFieldsParserTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
+    @Test
 	public void simpleParsing() throws Exception {
 		JsonFieldsParser parser = new JsonFieldsParser();
 		

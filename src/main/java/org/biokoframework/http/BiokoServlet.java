@@ -115,8 +115,8 @@ public class BiokoServlet extends HttpServlet {
 		Fields output = null;
 		
 		try {
-			String pathTranslated = requestWrapper.getPathTranslated();
-			LOGGER.info("pathTranslated: " + pathTranslated);
+			String pathTranslated = requestWrapper.getPathInfo();
+			LOGGER.info("path: " + pathTranslated);
 
 			IRoute route = fRequestParser.getRoute(requestWrapper);
 			input = route.getFields();

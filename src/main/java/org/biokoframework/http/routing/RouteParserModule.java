@@ -28,8 +28,10 @@
 package org.biokoframework.http.routing;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.impl.JsonFieldsParser;
+import org.biokoframework.http.fields.impl.UrlEncodedFieldsParser;
 import org.biokoframework.http.routing.impl.HttpRouteParserImpl;
 
 /**
@@ -43,7 +45,10 @@ public class RouteParserModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(IHttpRouteParser.class).to(HttpRouteParserImpl.class);
-		bind(IHttpFieldsParser.class).to(JsonFieldsParser.class);
+
+        Multibinder<IHttpFieldsParser> parserMultibinder = Multibinder.newSetBinder(binder(), IHttpFieldsParser.class);
+        parserMultibinder.addBinding().to(JsonFieldsParser.class);
+        parserMultibinder.addBinding().to(UrlEncodedFieldsParser.class);
 	}
 
 }

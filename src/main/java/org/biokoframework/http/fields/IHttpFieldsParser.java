@@ -41,4 +41,6 @@ public interface IHttpFieldsParser {
 
 	Fields parse(HttpServletRequest request) throws RequestNotSupportedException;
 
+    boolean isCompatible(String contentType);
+
 }

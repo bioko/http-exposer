@@ -34,6 +34,8 @@ import org.biokoframework.http.routing.IHttpRouteParser;
 import org.biokoframework.http.routing.IRoute;
 import org.biokoframework.http.routing.RouteNotSupportedException;
 import org.biokoframework.system.KILL_ME.commons.HttpMethod;
+import org.biokoframework.utils.domain.ErrorEntity;
+import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;
 
 import javax.inject.Inject;
@@ -43,6 +45,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -55,15 +58,15 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
 
     private static final Logger LOGGER = Logger.getLogger(HttpRouteParserImpl.class);
 
-    private final IHttpFieldsParser fFieldsParser;
+    private final Set<IHttpFieldsParser> fFieldsParsers;
 	private final Map<String, String> fHeadersMapping;
 
     private final Pattern fExtensionPattern;
     private final Pattern fQueryStringPattern;
 
     @Inject
-	public HttpRouteParserImpl(IHttpFieldsParser fieldsParser, @Named("httpHeaderToFieldsMap") Map<String, String> headersMapping) {
-		fFieldsParser = fieldsParser;
+	public HttpRouteParserImpl(Set<IHttpFieldsParser> fieldsParsers, @Named("httpHeaderToFieldsMap") Map<String, String> headersMapping) {
+		fFieldsParsers = fieldsParsers;
 		fHeadersMapping = headersMapping;
 
         fExtensionPattern = Pattern.compile("\\.[a-zA-Z0-9]+/$");
@@ -80,12 +83,29 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
         headersFields.putAll(extractQueryString(request));
 
 		if (request.getContentLength() > 0) {
-			try {
-				return fFieldsParser.parse(request).putAll(headersFields);
+            boolean somebodyParsedTheRequest = false;
+            try {
+                for (IHttpFieldsParser aParser : fFieldsParsers) {
+                    if (aParser.isCompatible(request.getContentType())) {
+                        headersFields.putAll(aParser.parse(request));
+                        somebodyParsedTheRequest = true;
+                    }
+                }
 			} catch (RequestNotSupportedException exception) {
-				throw new RouteNotSupportedException(exception);
+                throw new RouteNotSupportedException(exception);
 			}
-		}
+
+            if (!somebodyParsedTheRequest) {
+                ErrorEntity error = new ErrorEntity();
+                error.setAll(new Fields(
+                        ErrorEntity.ERROR_FIELD, "ContentType",
+                        ErrorEntity.ERROR_CODE, FieldNames.UNSUPPORTED_FORMAT_CODE,
+                        ErrorEntity.ERROR_MESSAGE, "Content type used is not supported"
+                ));
+                throw new RouteNotSupportedException(error);
+            }
+        }
+
 		return headersFields;
 	}
 

@@ -63,7 +63,7 @@ public class HttpRouteParserImplTest {
 	@Before
 	public void createParser()  {
 		fMockFieldsParser = new MockFieldsParser();
-		fParser = new HttpRouteParserImpl(fMockFieldsParser, new HashMap<String, String>());
+		fParser = new HttpRouteParserImpl(Collections.<IHttpFieldsParser>singleton(fMockFieldsParser), new HashMap<String, String>());
 	}
 
 	@Test
@@ -137,7 +137,7 @@ public class HttpRouteParserImplTest {
         Map<String, String > headersConversionMap = new HashMap<>();
         headersConversionMap.put("An-Header", "anHeader");
 
-        fParser = new HttpRouteParserImpl(fMockFieldsParser, headersConversionMap);
+        fParser = new HttpRouteParserImpl(Collections.<IHttpFieldsParser>singleton(fMockFieldsParser), headersConversionMap);
 
         MockRequest request = new MockRequest(HttpMethod.GET.toString(), "/url", null);
         request.setHeader("An-Header", "aValue");
@@ -154,7 +154,7 @@ public class HttpRouteParserImplTest {
 
     @Test
     public void parseWithQueryString() throws Exception {
-        fParser = new HttpRouteParserImpl(fMockFieldsParser, Collections.<String, String>emptyMap());
+        fParser = new HttpRouteParserImpl(Collections.<IHttpFieldsParser>singleton(fMockFieldsParser), Collections.<String, String>emptyMap());
 
         MockRequest request = new MockRequest(HttpMethod.GET.toString(), "/url?gino=pino", null);
 
@@ -210,16 +210,25 @@ public class HttpRouteParserImplTest {
 	private static final class MockFieldsParser implements IHttpFieldsParser {
 
 		private boolean fWasCalledParse = false;
-		
-		@Override
+        private boolean fWasCalledIsCompatible = false;
+
+        @Override
 		public Fields parse(HttpServletRequest request) {
 			fWasCalledParse = true;
 			return new Fields();
 		}
-		
-		public boolean wasCalledParse() {
+
+        @Override
+        public boolean isCompatible(String contentType) {
+            fWasCalledIsCompatible = true;
+            return true;
+        }
+
+        public boolean wasCalledParse() {
 			return fWasCalledParse;
 		}
-		
+        public boolean isWasCalledIsCompatible() {
+            return fWasCalledIsCompatible;
+        }
 	}
 }

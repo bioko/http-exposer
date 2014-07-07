@@ -35,8 +35,6 @@ import org.biokoframework.utils.fields.Fields;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 
 /**
  * 
@@ -56,9 +54,7 @@ public class JsonFieldsParser extends AbstractFieldsParser {
                 request.setCharacterEncoding("utf-8");
             }
             reader = request.getReader();
-			Writer writer = new StringWriter();
-			IOUtils.copy(reader, writer);
-			return Fields.fromJson(writer.toString());
+			return Fields.fromJson(IOUtils.toString(reader));
 		} catch (IOException exception) {
 			// TODO log exception
 			throw new RequestNotSupportedException(exception);
@@ -67,9 +63,14 @@ public class JsonFieldsParser extends AbstractFieldsParser {
 
 	@Override
 	protected void checkContentType(String contentType) throws RequestNotSupportedException {
-		if (!StringUtils.startsWith(contentType, JSON_TYPE)){
+		if (!isCompatible(contentType)){
 			throw badContentType(contentType, JSON_TYPE);
 		}
 	}
+
+    @Override
+    public boolean isCompatible(String contentType) {
+        return StringUtils.startsWith(contentType, JSON_TYPE);
+    }
 
 }

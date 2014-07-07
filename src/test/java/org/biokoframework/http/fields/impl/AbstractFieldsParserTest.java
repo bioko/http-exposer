@@ -94,7 +94,11 @@ public class AbstractFieldsParserTest {
 		public HttpServletRequest getCapturedRequest() {
 			return fRequest;
 		}
-		
-	}
+
+        @Override
+        public boolean isCompatible(String contentType) {
+            return true;
+        }
+    }
 
 }
