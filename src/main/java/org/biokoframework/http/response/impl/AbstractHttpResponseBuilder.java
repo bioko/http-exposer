@@ -56,13 +56,15 @@ public abstract class AbstractHttpResponseBuilder implements IHttpResponseBuilde
 	
 	@Override
 	public final void build(HttpServletRequest request, HttpServletResponse response, Fields input, Fields output) throws IOException, RequestNotSupportedException {
-		if (request.getMethod().equals("POST") || request.getMethod().equals("PUT")) {
-			checkAcceptType(Arrays.asList(request.getContentType()), getRequestExtension(request.getPathInfo()));
-		} else {
-			checkAcceptType(getAccept(request), getRequestExtension(request.getPathInfo()));
-		}
-		
-		response.setStatus(HttpStatus.SC_OK);
+
+        List<String> acceptedTypes = getAccept(request);
+        if (acceptedTypes == null && (request.getMethod().equals("POST") || request.getMethod().equals("PUT"))) {
+            acceptedTypes = Arrays.asList(request.getContentType());
+        }
+
+        checkAcceptType(acceptedTypes, getRequestExtension(request.getPathInfo()));
+
+        response.setStatus(HttpStatus.SC_OK);
 		
 		safelyBuild(request, response, input, output);
 	}
