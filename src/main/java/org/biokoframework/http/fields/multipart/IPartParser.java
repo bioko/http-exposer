@@ -23,37 +23,18 @@
  * THE SOFTWARE.
  */
 
-package org.biokoframework.http.fields.impl;
+package org.biokoframework.http.fields.multipart;
 
-import org.apache.commons.lang3.StringUtils;
-import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.utils.fields.Fields;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Part;
 
 /**
  * @author Mikol Faro <mikol.faro@gmail.com>
  * @date 2014-08-12
  */
-public class MultipartFieldsParser extends AbstractFieldsParser {
+public interface IPartParser {
 
-    private static final String MULTIPART_TYPE = "multipart/form-data";
-
-    @Override
-    protected Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {
-        return new Fields();
-    }
-
-    @Override
-    protected void checkContentType(String contentType) throws RequestNotSupportedException {
-        if (!isCompatible(contentType)){
-            throw badContentType(contentType, MULTIPART_TYPE);
-        }
-    }
-
-    @Override
-    public boolean isCompatible(String contentType) {
-        return StringUtils.startsWith(contentType, MULTIPART_TYPE);
-    }
+    Fields parse(Part part, String charset);
 
 }

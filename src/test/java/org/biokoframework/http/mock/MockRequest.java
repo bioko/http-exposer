@@ -44,7 +44,8 @@ public class MockRequest implements HttpServletRequest {
 	private final String fMethod;
 	private final String fPath;
 	private final String fContent;
-	private String fType;
+    private final List<Part> fMultipartRequestParts;
+    private String fType;
 	private Map<String, String> fHeaders;
 	private String fCharacterEncoding;
 
@@ -56,11 +57,19 @@ public class MockRequest implements HttpServletRequest {
 		fMethod = method;
 		fPath = path;
 		fContent = content;
-		fHeaders = new HashMap<>();
+        fMultipartRequestParts = null;
+        fHeaders = new HashMap<>();
 	}
-	
 
-	@Override
+    public MockRequest(String method, String path, Part... multipartRequestParts) {
+        fMethod = method;
+        fPath = path;
+        fMultipartRequestParts = Arrays.asList(multipartRequestParts);
+        fContent = null;
+    }
+
+
+    @Override
 	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
 		fCharacterEncoding = env;
 	}
@@ -128,6 +137,15 @@ public class MockRequest implements HttpServletRequest {
             return getPathInfo().replaceAll(".*\\?", "");
         }
         return null;
+    }
+
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        if (fMultipartRequestParts == null) {
+            throw new UnsupportedOperationException();
+        } else {
+            return fMultipartRequestParts;
+        }
     }
 
     private static final class MockServletIS extends ServletInputStream {
@@ -439,11 +457,6 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public void logout() throws ServletException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Collection<Part> getParts() throws IOException, ServletException {
 		throw new UnsupportedOperationException();
 	}
 
