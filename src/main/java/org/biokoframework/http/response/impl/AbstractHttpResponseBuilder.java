@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.response.impl;
 
+import com.google.common.net.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.biokoframework.http.fields.RequestNotSupportedException;
@@ -36,7 +37,7 @@ import org.biokoframework.utils.fields.Fields;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -49,17 +50,17 @@ import java.util.regex.Pattern;
  */
 public abstract class AbstractHttpResponseBuilder implements IHttpResponseBuilder {
 
-    protected static final String JOLLY_TYPE = "*/*";
-
 	private static final String ACCEPT = "Accept";
 	private final Pattern fExtensionPattern = Pattern.compile("\\.([a-zA-Z0-9]+)$");
 	
 	@Override
 	public final void build(HttpServletRequest request, HttpServletResponse response, Fields input, Fields output) throws IOException, RequestNotSupportedException {
 
-        List<String> acceptedTypes = getAccept(request);
-        if (acceptedTypes == null && (request.getMethod().equals("POST") || request.getMethod().equals("PUT"))) {
-            acceptedTypes = Arrays.asList(request.getContentType());
+        List<MediaType> acceptedTypes = getAccept(request);
+        if (acceptedTypes.isEmpty() && (request.getMethod().equals("POST") || request.getMethod().equals("PUT"))) {
+            if (!StringUtils.isEmpty(request.getContentType())) {
+                acceptedTypes.add(MediaType.parse(request.getContentType()));
+            }
         }
 
         checkAcceptType(acceptedTypes, getRequestExtension(request.getPathInfo()));
@@ -72,11 +73,11 @@ public abstract class AbstractHttpResponseBuilder implements IHttpResponseBuilde
 	protected abstract void safelyBuild(HttpServletRequest request, HttpServletResponse response, Fields input, Fields output) throws IOException, RequestNotSupportedException;
 
 	/**
-	 * @param acceptedTypes - The list contained in the header "Accept" or the "Content-Type", depending on the request type (or null if not present) 
+	 * @param acceptedMediaTypes - The list contained in the header "Accept" or the "Content-Type", depending on the request type (or null if not present)
 	 * @param extension - Request extension e.g. {@code http://your.site/page.json} has extension {@code json} (or null if not present)
-	 * @throws RequestNotSupportedException 
+	 * @throws RequestNotSupportedException
 	 */
-	protected abstract void checkAcceptType(List<String> acceptedTypes, String extension) throws RequestNotSupportedException;
+	protected abstract void checkAcceptType(List<MediaType> acceptedMediaTypes, String extension) throws RequestNotSupportedException;
 	
 	protected String getRequestExtension(String pathInfo) {
 		Matcher matcher = fExtensionPattern.matcher(pathInfo);
@@ -86,12 +87,15 @@ public abstract class AbstractHttpResponseBuilder implements IHttpResponseBuilde
 		return null;
 	}
 	
-	protected List<String> getAccept(HttpServletRequest request) {
+	protected List<MediaType> getAccept(HttpServletRequest request) {
+        List<MediaType> acceptedMediaTypes = new ArrayList<>();
 		String accept = request.getHeader(ACCEPT);
 		if (!StringUtils.isEmpty(accept)) {
-			return Arrays.asList(accept.split(","));
+            for (String aStringAccept : accept.split(",")) {
+                acceptedMediaTypes.add(MediaType.parse(aStringAccept));
+            }
 		}
-		return null;
+        return acceptedMediaTypes;
 	}
 
 	/**

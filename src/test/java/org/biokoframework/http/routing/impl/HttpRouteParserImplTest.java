@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.routing.impl;
 
+import com.google.common.net.MediaType;
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.mock.MockRequest;
 import org.biokoframework.http.routing.IRoute;
@@ -123,7 +124,8 @@ public class HttpRouteParserImplTest {
 	
 	@Test
 	public void parseWithFields() throws Exception {
-		HttpServletRequest request = new MockRequest(HttpMethod.PUT.toString(), "/withField", "{ }");
+        MockRequest request = new MockRequest(HttpMethod.PUT.toString(), "/withField", "{}");
+        request.setContentType(MediaType.JSON_UTF_8.toString());
 		
 		IRoute route = fParser.getRoute(request);
 		assertThat(route, is(notNullValue()));
@@ -139,7 +141,7 @@ public class HttpRouteParserImplTest {
 
         fParser = new HttpRouteParserImpl(Collections.<IHttpFieldsParser>singleton(fMockFieldsParser), headersConversionMap);
 
-        MockRequest request = new MockRequest(HttpMethod.GET.toString(), "/url", null);
+        MockRequest request = new MockRequest(HttpMethod.GET.toString(), "/url");
         request.setHeader("An-Header", "aValue");
 
         IRoute route = fParser.getRoute(request);
@@ -156,7 +158,7 @@ public class HttpRouteParserImplTest {
     public void parseWithQueryString() throws Exception {
         fParser = new HttpRouteParserImpl(Collections.<IHttpFieldsParser>singleton(fMockFieldsParser), Collections.<String, String>emptyMap());
 
-        MockRequest request = new MockRequest(HttpMethod.GET.toString(), "/url?gino=pino", null);
+        MockRequest request = new MockRequest(HttpMethod.GET.toString(), "/url?gino=pino");
 
         IRoute route = fParser.getRoute(request);
         assertThat(route, is(notNullValue()));
@@ -165,7 +167,7 @@ public class HttpRouteParserImplTest {
         assertThat(fMockFieldsParser.wasCalledParse(), is(false));
         assertThat(route.getFields(), is(equalTo(new Fields("gino", "pino"))));
 
-        request = new MockRequest(HttpMethod.GET.toString(), "/url/?gino=pino", null);
+        request = new MockRequest(HttpMethod.GET.toString(), "/url/?gino=pino");
 
         route = fParser.getRoute(request);
         assertThat(route, is(notNullValue()));
@@ -177,34 +179,34 @@ public class HttpRouteParserImplTest {
 
     @Test
     public void trimExtensionForContentType() throws Exception {
-        HttpServletRequest request = new MockRequest(HttpMethod.GET.toString(), "/withField.json", "{ }");
+        HttpServletRequest request = new MockRequest(HttpMethod.GET.toString(), "/withField.json", "");
 
         IRoute route = fParser.getRoute(request);
         assertThat(route, is(notNullValue()));
         assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
         assertThat(route.getPath(), is(equalTo("/withField/")));
-        assertThat(fMockFieldsParser.wasCalledParse(), is(true));
+        assertThat(fMockFieldsParser.wasCalledParse(), is(false));
 
-        request = new MockRequest(HttpMethod.GET.toString(), "/withField.json/", "{ }");
+        request = new MockRequest(HttpMethod.GET.toString(), "/withField.json/", "");
         route = fParser.getRoute(request);
         assertThat(route, is(notNullValue()));
         assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
         assertThat(route.getPath(), is(equalTo("/withField/")));
-        assertThat(fMockFieldsParser.wasCalledParse(), is(true));
+        assertThat(fMockFieldsParser.wasCalledParse(), is(false));
 
-        request = new MockRequest(HttpMethod.GET.toString(), "/withField/45.json/", "{ }");
+        request = new MockRequest(HttpMethod.GET.toString(), "/withField/45.json/", "");
         route = fParser.getRoute(request);
         assertThat(route, is(notNullValue()));
         assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
         assertThat(route.getPath(), is(equalTo("/withField/45/")));
-        assertThat(fMockFieldsParser.wasCalledParse(), is(true));
+        assertThat(fMockFieldsParser.wasCalledParse(), is(false));
 
-        request = new MockRequest(HttpMethod.GET.toString(), "/withField/45.json", "{ }");
+        request = new MockRequest(HttpMethod.GET.toString(), "/withField/45.json", "");
         route = fParser.getRoute(request);
         assertThat(route, is(notNullValue()));
         assertThat(route.getMethod(), is(equalTo(HttpMethod.GET)));
         assertThat(route.getPath(), is(equalTo("/withField/45/")));
-        assertThat(fMockFieldsParser.wasCalledParse(), is(true));
+        assertThat(fMockFieldsParser.wasCalledParse(), is(false));
     }
 
 	private static final class MockFieldsParser implements IHttpFieldsParser {
@@ -219,7 +221,7 @@ public class HttpRouteParserImplTest {
 		}
 
         @Override
-        public boolean isCompatible(String contentType) {
+        public boolean isCompatible(MediaType mediaType) {
             fWasCalledIsCompatible = true;
             return true;
         }

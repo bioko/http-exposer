@@ -87,11 +87,11 @@ public class MultipartFieldsParserTest {
     @Test
     public void failBecauseOfWrongContentType() throws Exception {
         thrown.expect(RequestNotSupportedException.class);
-        thrown.expectMessage(matchesPattern(".*type example not supported.*"));
+        thrown.expectMessage(matchesPattern(".*type example\\\\/example not supported.*"));
 
         MultipartFieldsParser parser = new MultipartFieldsParser(fFileDataPartParser, fStringPartParser);
         MockRequest request = new MockRequest("POST", "/something", "Some content");
-        request.setContentType("example");
+        request.setContentType("example/example");
 
         parser.parse(request);
     }

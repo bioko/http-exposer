@@ -28,6 +28,7 @@
 
 package org.biokoframework.http.fields.impl;
 
+import com.google.common.net.MediaType;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.mock.MockRequest;
 import org.biokoframework.utils.fields.Fields;
@@ -56,7 +57,7 @@ public class AbstractFieldsParserTest {
 		parser.parse(request);
 		
 		assertThat(parser.getCapturedRequest(), is(theInstance((HttpServletRequest)request)));
-		assertThat(parser.getCapturedContentType(), is(equalTo("text/plain")));
+		assertThat(parser.getCapturedMediaType(), is(equalTo(MediaType.PLAIN_TEXT_UTF_8.withoutParameters())));
 	}
 	
 	@Test
@@ -68,13 +69,13 @@ public class AbstractFieldsParserTest {
 		parser.parse(request);
 		
 		assertThat(parser.getCapturedRequest(), is(theInstance((HttpServletRequest)request)));
-		assertThat(parser.getCapturedContentType(), is(nullValue()));
+		assertThat(parser.getCapturedMediaType(), is(nullValue()));
 	}
 	
 	private final class MockFieldsParser extends AbstractFieldsParser {
 
 		private HttpServletRequest fRequest;
-		private String fContentType;
+		private MediaType fMediaType;
 
 		@Override
 		protected Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {
@@ -83,12 +84,12 @@ public class AbstractFieldsParserTest {
 		}
 
 		@Override
-		protected void checkContentType(String contentType) throws RequestNotSupportedException {
-			fContentType = contentType;
+		protected void checkContentType(MediaType mediaType) throws RequestNotSupportedException {
+			fMediaType = mediaType;
 		}
 		
-		public String getCapturedContentType() {
-			return fContentType;
+		public MediaType getCapturedMediaType() {
+			return fMediaType;
 		}
 		
 		public HttpServletRequest getCapturedRequest() {
@@ -96,7 +97,7 @@ public class AbstractFieldsParserTest {
 		}
 
         @Override
-        public boolean isCompatible(String contentType) {
+        public boolean isCompatible(MediaType mediaType) {
             return true;
         }
     }

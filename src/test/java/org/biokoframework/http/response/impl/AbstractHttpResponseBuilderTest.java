@@ -28,6 +28,7 @@
 
 package org.biokoframework.http.response.impl;
 
+import com.google.common.net.MediaType;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.mock.MockRequest;
 import org.biokoframework.http.mock.MockResponse;
@@ -50,16 +51,18 @@ import static org.junit.Assert.assertThat;
  */
 public class AbstractHttpResponseBuilderTest {
 
-	@Test
+    public static final MediaType PLAIN_TEXT = MediaType.PLAIN_TEXT_UTF_8.withoutParameters();
+
+    @Test
 	public void testContentType() throws Exception {
 		MockResponseBuilder builder = new MockResponseBuilder();
 		
 		MockRequest request = new MockRequest("POST", "/something", "some plain text content");
-		request.setContentType("text/plain");
+		request.setContentType(PLAIN_TEXT.toString());
 		
 		builder.build(request, new MockResponse(), null, null);
 		
-		assertThat(builder.fCapturedTypes, contains("text/plain"));
+		assertThat(builder.fCapturedTypes, contains(PLAIN_TEXT));
 		assertThat(builder.fCapturedExtension, is(nullValue()));
 	}
 	
@@ -68,11 +71,11 @@ public class AbstractHttpResponseBuilderTest {
 		MockResponseBuilder builder = new MockResponseBuilder();
 		
 		MockRequest request = new MockRequest("POST", "/something.txt", "some plain text content");
-		request.setContentType("text/plain");
+		request.setContentType(PLAIN_TEXT.toString());
 		
 		builder.build(request, new MockResponse(), null, null);
 		
-		assertThat(builder.fCapturedTypes, contains("text/plain"));
+		assertThat(builder.fCapturedTypes, contains(PLAIN_TEXT));
 		assertThat(builder.fCapturedExtension, is(equalTo("txt")));
 	}
 	
@@ -81,11 +84,11 @@ public class AbstractHttpResponseBuilderTest {
 		MockResponseBuilder builder = new MockResponseBuilder();
 		
 		MockRequest request = new MockRequest("GET", "/something");
-		request.setHeader("Accept", "text/plain");
+		request.setHeader("Accept", PLAIN_TEXT.toString());
 		
 		builder.build(request, new MockResponse(), null, null);
 		
-		assertThat(builder.fCapturedTypes, contains("text/plain"));
+		assertThat(builder.fCapturedTypes, contains(PLAIN_TEXT));
 		assertThat(builder.fCapturedExtension, is(nullValue()));
 	}
 	
@@ -94,11 +97,11 @@ public class AbstractHttpResponseBuilderTest {
 		MockResponseBuilder builder = new MockResponseBuilder();
 		
 		MockRequest request = new MockRequest("GET", "/something.txt");
-		request.setHeader("Accept", "text/plain");
+		request.setHeader("Accept", PLAIN_TEXT.toString());
 		
 		builder.build(request, new MockResponse(), null, null);
 		
-		assertThat(builder.fCapturedTypes, contains("text/plain"));
+		assertThat(builder.fCapturedTypes, contains(PLAIN_TEXT));
 		assertThat(builder.fCapturedExtension, is(equalTo("txt")));
 	}
 	
@@ -110,7 +113,7 @@ public class AbstractHttpResponseBuilderTest {
 		
 		builder.build(request, new MockResponse(), null, null);
 		
-		assertThat(builder.fCapturedTypes, is(nullValue()));
+		assertThat(builder.fCapturedTypes, is(emptyCollectionOf(MediaType.class)));
 		assertThat(builder.fCapturedExtension, is(equalTo("txt")));
 	}
 
@@ -123,7 +126,7 @@ public class AbstractHttpResponseBuilderTest {
 		
 		builder.build(request, response, null, null);
 		
-		assertThat(builder.fCapturedTypes, is(nullValue()));
+		assertThat(builder.fCapturedTypes, is(emptyCollectionOf(MediaType.class)));
 		assertThat(builder.fCapturedExtension, is(equalTo("txt")));
 		assertThat(response.getContentType(), is(equalTo("plain/text; charset=utf-8")));
 	}
@@ -138,14 +141,14 @@ public class AbstractHttpResponseBuilderTest {
 		
 		builder.build(request, response, null, null);
 		
-		assertThat(builder.fCapturedTypes, is(nullValue()));
+		assertThat(builder.fCapturedTypes, is(emptyCollectionOf(MediaType.class)));
 		assertThat(builder.fCapturedExtension, is(equalTo("txt")));
 		assertThat(response.getContentType(), is(equalTo("plain/text; charset=iso-8859-1")));
 	}
 
 	private static final class MockResponseBuilder extends AbstractHttpResponseBuilder {
 		
-		public List<String> fCapturedTypes;
+		public List<MediaType> fCapturedTypes;
 		public String fCapturedExtension;
 		
 		@Override
@@ -156,7 +159,7 @@ public class AbstractHttpResponseBuilderTest {
 		}
 
 		@Override
-		protected void checkAcceptType(List<String> acceptedTypes, String extension) throws RequestNotSupportedException {
+		protected void checkAcceptType(List<MediaType> acceptedTypes, String extension) throws RequestNotSupportedException {
 			fCapturedTypes = acceptedTypes;
 			fCapturedExtension = extension;
 		}

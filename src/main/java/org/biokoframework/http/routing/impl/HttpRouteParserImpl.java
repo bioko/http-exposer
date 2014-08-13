@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.routing.impl;
 
+import com.google.common.net.MediaType;
 import org.apache.log4j.Logger;
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.RequestNotSupportedException;
@@ -86,7 +87,7 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
             boolean somebodyParsedTheRequest = false;
             try {
                 for (IHttpFieldsParser aParser : fFieldsParsers) {
-                    if (aParser.isCompatible(request.getContentType())) {
+                    if (aParser.isCompatible(MediaType.parse(request.getContentType()))) {
                         headersFields.putAll(aParser.parse(request));
                         somebodyParsedTheRequest = true;
                     }

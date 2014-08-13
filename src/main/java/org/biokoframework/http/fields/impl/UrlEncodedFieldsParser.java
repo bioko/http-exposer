@@ -1,7 +1,7 @@
 package org.biokoframework.http.fields.impl;
 
+import com.google.common.net.MediaType;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.utils.fields.Fields;
 
@@ -16,7 +16,7 @@ import java.net.URLDecoder;
  */
 public class UrlEncodedFieldsParser extends AbstractFieldsParser {
 
-    public static final String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
+    public static final MediaType X_WWW_FORM_URLENCODED = MediaType.FORM_DATA;
 
     @Override
     protected Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {
@@ -43,15 +43,15 @@ public class UrlEncodedFieldsParser extends AbstractFieldsParser {
     }
 
     @Override
-    protected void checkContentType(String contentType) throws RequestNotSupportedException {
-        if (!isCompatible(contentType)){
-            throw badContentType(contentType, X_WWW_FORM_URLENCODED);
+    protected void checkContentType(MediaType mediaType) throws RequestNotSupportedException {
+        if (!isCompatible(mediaType)){
+            throw badContentType(mediaType, X_WWW_FORM_URLENCODED);
         }
     }
 
     @Override
-    public boolean isCompatible(String contentType) {
-        return StringUtils.startsWith(contentType, X_WWW_FORM_URLENCODED);
+    public boolean isCompatible(MediaType mediaType) {
+        return mediaType.withoutParameters().is(X_WWW_FORM_URLENCODED);
     }
 
 }

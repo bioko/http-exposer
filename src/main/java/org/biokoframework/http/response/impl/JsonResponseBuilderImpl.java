@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.response.impl;
 
+import com.google.common.net.MediaType;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.RequestNotSupportedException;
@@ -81,7 +82,7 @@ public class JsonResponseBuilderImpl extends AbstractHttpResponseBuilder {
 	}
 	
 	@Override
-	protected void checkAcceptType(List<String> acceptedTypes, String extension) throws RequestNotSupportedException {
+	protected void checkAcceptType(List<MediaType> acceptedTypes, String extension) throws RequestNotSupportedException {
 
 		if (!StringUtils.isEmpty(extension) && !JSON_EXTENSION.equals(extension)) {
 			ErrorEntity entity = new ErrorEntity();
@@ -90,10 +91,10 @@ public class JsonResponseBuilderImpl extends AbstractHttpResponseBuilder {
 					ErrorEntity.ERROR_MESSAGE, "Request with extension " + extension + " are not supported"));
 			throw new RequestNotSupportedException(entity);
 		} else if (acceptedTypes != null && !acceptedTypes.isEmpty()) {
-			for (String anAcceptedType : acceptedTypes) {
-				if (anAcceptedType.startsWith(APPLICATION_JSON) || anAcceptedType.startsWith(JOLLY_TYPE)) {
-					return;
-				}
+			for (MediaType anAcceptedType : acceptedTypes) {
+                if (MediaType.JSON_UTF_8.withoutParameters().is(anAcceptedType.withoutParameters())) {
+                    return;
+                }
 			}
 			ErrorEntity entity = new ErrorEntity();
 			entity.setAll(new Fields(

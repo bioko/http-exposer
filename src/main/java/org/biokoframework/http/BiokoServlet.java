@@ -105,15 +105,16 @@ public class BiokoServlet extends HttpServlet {
 
 	private void restExposer(HttpServletRequest req, HttpServletResponse response) throws IOException, ServletException {
 
-		RequestWrapper requestWrapper = new RequestWrapper(req);
+//		RequestWrapper requestWrapper = new RequestWrapper(req);
+        HttpServletRequest requestWrapper = req;
 		
-		LOGGER.debug(">>>>>>>>>>>>>>>>>>>> SERVLET >>>>>>>>>>>>>>>>>>>");
-		LOGGER.debug(requestWrapper.report());
-		LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+//		LOGGER.debug(">>>>>>>>>>>>>>>>>>>> SERVLET >>>>>>>>>>>>>>>>>>>");
+//		LOGGER.debug(requestWrapper.report());
+//		LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		
 		Fields input = null;
 		Fields output = null;
-		
+
 		try {
 			String pathTranslated = requestWrapper.getPathInfo();
 			LOGGER.info("path: " + pathTranslated);

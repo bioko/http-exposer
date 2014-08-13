@@ -25,6 +25,7 @@
 
 package org.biokoframework.http.fields.multipart;
 
+import com.google.common.net.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.fields.impl.AbstractFieldsParser;
@@ -42,8 +43,7 @@ import java.io.IOException;
  */
 public class MultipartFieldsParser extends AbstractFieldsParser {
 
-    private static final String MULTIPART_TYPE = "multipart/form-data";
-    private static final String CONTENT_DISPOSITION = "Content-Disposition";
+    private static final MediaType MULTIPART_TYPE = MediaType.create("multipart", "form-data");
 
     private final IPartParser fFilePartParser;
     private final IPartParser fStringPartParser;
@@ -61,9 +61,9 @@ public class MultipartFieldsParser extends AbstractFieldsParser {
         try {
             for(Part aPart : request.getParts()) {
                 if (isAFilePart(aPart)) {
-                    fields.putAll(fFilePartParser.parse(aPart, null));
+                    fields.putAll(fFilePartParser.parse(aPart, chooseEncoding(request)));
                 } else {
-                    fields.putAll(fStringPartParser.parse(aPart, null));
+                    fields.putAll(fStringPartParser.parse(aPart, chooseEncoding(request)));
                 }
             }
         } catch (IOException | ServletException e) {
@@ -73,21 +73,25 @@ public class MultipartFieldsParser extends AbstractFieldsParser {
         return fields;
     }
 
+    private String chooseEncoding(HttpServletRequest request) {
+        return StringUtils.defaultIfEmpty(request.getCharacterEncoding(), "UTF-8");
+    }
+
     private boolean isAFilePart(Part part) {
         return !StringUtils.isEmpty(part.getContentType());
     }
 
 
     @Override
-    protected void checkContentType(String contentType) throws RequestNotSupportedException {
-        if (!isCompatible(contentType)){
-            throw badContentType(contentType, MULTIPART_TYPE);
+    protected void checkContentType(MediaType mediaType) throws RequestNotSupportedException {
+        if (!isCompatible(mediaType)){
+            throw badContentType(mediaType, MULTIPART_TYPE);
         }
     }
 
     @Override
-    public boolean isCompatible(String contentType) {
-        return StringUtils.startsWith(contentType, MULTIPART_TYPE);
+    public boolean isCompatible(MediaType mediaType) {
+        return mediaType.withoutParameters().is(MULTIPART_TYPE);
     }
 
 }
