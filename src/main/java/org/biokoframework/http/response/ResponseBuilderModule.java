@@ -29,6 +29,7 @@ package org.biokoframework.http.response;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
+import org.biokoframework.http.response.impl.BinaryResponseBuilderImpl;
 import org.biokoframework.http.response.impl.HttpResponseBuilderImpl;
 import org.biokoframework.http.response.impl.JsonResponseBuilderImpl;
 
@@ -46,6 +47,7 @@ public class ResponseBuilderModule extends AbstractModule {
 
         Multibinder<IResponseContentBuilder> contentBuilderMultibinder = Multibinder.newSetBinder(binder(), IResponseContentBuilder.class);
         contentBuilderMultibinder.addBinding().to(JsonResponseBuilderImpl.class);
+        contentBuilderMultibinder.addBinding().to(BinaryResponseBuilderImpl.class);
 	}
 
 }
