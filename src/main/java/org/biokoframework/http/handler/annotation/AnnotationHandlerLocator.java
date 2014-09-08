@@ -43,6 +43,7 @@ import org.biokoframework.system.command.crud.DeleteEntityCommand;
 import org.biokoframework.system.command.crud.RetrieveEntityCommand;
 import org.biokoframework.system.command.crud.UpdateEntityCommand;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
+import org.biokoframework.system.command.crud.binary.DeleteBinaryEntityCommand;
 import org.biokoframework.system.command.crud.binary.GetBinaryEntityCommand;
 import org.biokoframework.system.command.crud.binary.PostBinaryEntityCommand;
 import org.biokoframework.system.command.crud.binary.PutBinaryEntityCommand;
@@ -193,6 +194,9 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 //                }
                 if (annotation.update()) {
                     addRoutedBinaryCrudCommand(HttpMethod.PUT, basePath, PutBinaryEntityCommand.class, mandatory, roles);
+                }
+                if (annotation.delete()) {
+                    addRoutedBinaryCrudCommand(HttpMethod.DELETE, basePath, DeleteBinaryEntityCommand.class, mandatory, roles);
                 }
             }
         } catch (IllegalAccessException exception) {
