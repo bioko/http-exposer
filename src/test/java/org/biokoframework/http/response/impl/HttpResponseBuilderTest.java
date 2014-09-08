@@ -189,9 +189,28 @@ public class HttpResponseBuilderTest {
         builder.build(httpRequest, httpResponse, input, output);
 
         assertThat(httpResponse.getStatus(), is(200));
-//        assertThat(httpResponse.getContentType(), is(equalTo("application/json; charset=utf-8")));
         assertThat(httpResponse.getHeader("The-Header"), is(equalTo("hasAStringValue")));
+    }
 
+    @Test
+    public void forcedContentTypeTest() throws Exception {
+        MockBuilder mockContentBuilder = new MockBuilder(null, null);
+        HttpResponseBuilderImpl builder = new HttpResponseBuilderImpl(
+                Collections.<String, String>emptyMap(),
+                Collections.<IResponseContentBuilder>singleton(mockContentBuilder)
+        );
+
+        MockRequest httpRequest = new MockRequest("GET", "/something.html");
+        MockResponse httpResponse = new MockResponse();
+
+        Fields input = new Fields();
+        Fields output = new Fields(
+                "mediaType", MediaType.JSON_UTF_8,
+                "RESPONSE", new Fields("a", "value"));
+
+        builder.build(httpRequest, httpResponse, input, output);
+
+        assertThat(mockContentBuilder.fCapturedTypes, contains(MediaType.JSON_UTF_8));
     }
 
 //    @Test

@@ -33,6 +33,7 @@ import org.apache.http.HttpStatus;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.response.IHttpResponseBuilder;
 import org.biokoframework.http.response.IResponseContentBuilder;
+import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
 import org.biokoframework.utils.domain.ErrorEntity;
 import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;
@@ -83,7 +84,10 @@ public class HttpResponseBuilderImpl implements IHttpResponseBuilder {
     }
 
     private IResponseContentBuilder findContentBuilder(HttpServletRequest request, Fields output) {
-        IResponseContentBuilder contentBuilder = findBuilderForForcedContentType(output);
+        IResponseContentBuilder contentBuilder = null;
+        if (output != null) {
+            contentBuilder = findBuilderForForcedContentType(output);
+        }
         if (contentBuilder == null) {
             contentBuilder = findBuilderForExtension(request);
         }
@@ -120,7 +124,10 @@ public class HttpResponseBuilderImpl implements IHttpResponseBuilder {
     }
 
     private IResponseContentBuilder findBuilderForForcedContentType(Fields output) {
-        // TODO required to support binary entites
+        MediaType mediaType = output.get(GenericFieldNames.RESPONSE_CONTENT_TYPE);
+        if (mediaType != null) {
+            return findBuilderForMediaType(mediaType);
+        }
         return null;
     }
 
