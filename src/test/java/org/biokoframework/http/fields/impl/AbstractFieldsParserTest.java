@@ -97,7 +97,7 @@ public class AbstractFieldsParserTest {
 		}
 
         @Override
-        public boolean isCompatible(MediaType mediaType) {
+        public boolean isCompatibleWith(MediaType mediaType) {
             return true;
         }
     }

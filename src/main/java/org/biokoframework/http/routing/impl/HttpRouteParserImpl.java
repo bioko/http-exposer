@@ -87,7 +87,7 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
             boolean somebodyParsedTheRequest = false;
             try {
                 for (IHttpFieldsParser aParser : fFieldsParsers) {
-                    if (aParser.isCompatible(MediaType.parse(request.getContentType()))) {
+                    if (aParser.isCompatibleWith(MediaType.parse(request.getContentType()))) {
                         headersFields.putAll(aParser.parse(request));
                         somebodyParsedTheRequest = true;
                     }

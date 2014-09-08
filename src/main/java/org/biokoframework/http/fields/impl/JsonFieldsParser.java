@@ -63,13 +63,13 @@ public class JsonFieldsParser extends AbstractFieldsParser {
 
 	@Override
 	protected void checkContentType(MediaType mediaType) throws RequestNotSupportedException {
-		if (!isCompatible(mediaType)){
+		if (!isCompatibleWith(mediaType)){
 			throw badContentType(mediaType, JSON_TYPE);
 		}
 	}
 
     @Override
-    public boolean isCompatible(MediaType mediaType) {
+    public boolean isCompatibleWith(MediaType mediaType) {
         return mediaType.withoutParameters().is(JSON_TYPE);
     }
 

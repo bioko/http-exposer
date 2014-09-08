@@ -221,7 +221,7 @@ public class HttpRouteParserImplTest {
 		}
 
         @Override
-        public boolean isCompatible(MediaType mediaType) {
+        public boolean isCompatibleWith(MediaType mediaType) {
             fWasCalledIsCompatible = true;
             return true;
         }

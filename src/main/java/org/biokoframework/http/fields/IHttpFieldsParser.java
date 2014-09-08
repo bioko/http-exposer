@@ -42,6 +42,6 @@ public interface IHttpFieldsParser {
 
 	Fields parse(HttpServletRequest request) throws RequestNotSupportedException;
 
-    boolean isCompatible(MediaType mediaType);
+    boolean isCompatibleWith(MediaType mediaType);
 
 }
