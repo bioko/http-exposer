@@ -74,6 +74,8 @@ public class ExceptionResponseModule extends AbstractModule {
 		map.put(CommandNotFoundException.class, 404);
 		map.put(UnknownRouteException.class, 404);
 
+        map.put(ForbiddenAccessException.class, 403);
+
 		map.put(ValidationException.class, 400);
 		map.put(CommandException.class, 500);
 
