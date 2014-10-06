@@ -30,6 +30,7 @@ package org.biokoframework.http.response.impl;
 import com.google.common.net.MediaType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.apache.log4j.Logger;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.http.response.IHttpResponseBuilder;
 import org.biokoframework.http.response.IResponseContentBuilder;
@@ -85,25 +86,34 @@ public class HttpResponseBuilderImpl implements IHttpResponseBuilder {
 
     private IResponseContentBuilder findContentBuilder(HttpServletRequest request, Fields output) {
         IResponseContentBuilder contentBuilder = null;
-        if (output != null) {
-            contentBuilder = findBuilderForForcedContentType(output);
-        }
-        if (contentBuilder == null) {
-            contentBuilder = findBuilderForExtension(request);
-        }
-        if (contentBuilder == null) {
-            contentBuilder = findBuilderByAcceptHeader(request);
-        }
-        if (contentBuilder == null) {
-            contentBuilder = findBuilderByRequestContentType(request);
+
+        try {
+
+            if (output != null) {
+                contentBuilder = findBuilderForForcedContentType(output);
+            }
+            if (contentBuilder == null) {
+                contentBuilder = findBuilderForExtension(request);
+            }
+            if (contentBuilder == null) {
+                contentBuilder = findBuilderByAcceptHeader(request);
+            }
+            if (contentBuilder == null) {
+                contentBuilder = findBuilderByRequestContentType(request);
+            }
+
+            List<MediaType> acceptedTypes = getAccept(request);
+            if (acceptedTypes.isEmpty() && (request.getMethod().equals("POST") || request.getMethod().equals("PUT"))) {
+                if (!StringUtils.isEmpty(request.getContentType())) {
+                    acceptedTypes.add(MediaType.parse(request.getContentType().trim()));
+                }
+            }
+
+        } catch (Exception e) {
+            Logger.getLogger(HttpResponseBuilderImpl.class).error("Error when searching content builder", e);
+            throw  e;
         }
 
-        List<MediaType> acceptedTypes = getAccept(request);
-        if (acceptedTypes.isEmpty() && (request.getMethod().equals("POST") || request.getMethod().equals("PUT"))) {
-            if (!StringUtils.isEmpty(request.getContentType())) {
-                acceptedTypes.add(MediaType.parse(request.getContentType()));
-            }
-        }
         return contentBuilder;
     }
 
@@ -177,7 +187,7 @@ public class HttpResponseBuilderImpl implements IHttpResponseBuilder {
         String accept = request.getHeader(ACCEPT);
         if (!StringUtils.isEmpty(accept)) {
             for (String aStringAccept : accept.split(",")) {
-                MediaType mediaType = MediaType.parse(aStringAccept);
+                MediaType mediaType = MediaType.parse(aStringAccept.trim());
 
                 List<String> qValues = mediaType.parameters().get("q");
                 if (qValues.isEmpty()) {
@@ -193,7 +203,7 @@ public class HttpResponseBuilderImpl implements IHttpResponseBuilder {
 
     private IResponseContentBuilder findBuilderByRequestContentType(HttpServletRequest request) {
         if (!StringUtils.isEmpty(request.getContentType())) {
-            return findBuilderForMediaType(MediaType.parse(request.getContentType()));
+            return findBuilderForMediaType(MediaType.parse(request.getContentType().trim()));
         }
         return null;
     }
