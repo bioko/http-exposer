@@ -78,7 +78,12 @@ public class MultipartFieldsParser extends AbstractFieldsParser {
     }
 
     private boolean isAFilePart(Part part) {
-        return !StringUtils.isEmpty(part.getContentType());
+        if (StringUtils.isEmpty(part.getContentType())) {
+            return false;
+        } else {
+            MediaType partMediaType = MediaType.parse(part.getContentType());
+            return !partMediaType.is(MediaType.PLAIN_TEXT_UTF_8.withoutParameters());
+        }
     }
 
 

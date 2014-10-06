@@ -28,6 +28,7 @@
 package org.biokoframework.http.routing.impl;
 
 import com.google.common.net.MediaType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.RequestNotSupportedException;
@@ -83,7 +84,7 @@ public class HttpRouteParserImpl implements IHttpRouteParser {
         Fields headersFields = extractHeaders(request);
         headersFields.putAll(extractQueryString(request));
 
-		if (request.getContentLength() > 0) {
+		if (request.getContentLength() > 0 || StringUtils.startsWith(request.getContentType(), "multipart/form-data")) {
             boolean somebodyParsedTheRequest = false;
             try {
                 for (IHttpFieldsParser aParser : fFieldsParsers) {
