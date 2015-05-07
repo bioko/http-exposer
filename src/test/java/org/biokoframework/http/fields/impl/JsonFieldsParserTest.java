@@ -51,6 +51,7 @@ public class JsonFieldsParserTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
+    @Test
 	public void simpleParsing() throws Exception {
 		JsonFieldsParser parser = new JsonFieldsParser();
 		
@@ -68,11 +69,11 @@ public class JsonFieldsParserTest {
 	@Test
 	public void failBecauseOfWrongContentType() throws Exception {
 		thrown.expect(RequestNotSupportedException.class);
-		thrown.expectMessage(matchesPattern(".*type example not supported.*"));
+		thrown.expectMessage(matchesPattern(".*type example\\\\/example not supported.*"));
 		
 		JsonFieldsParser parser = new JsonFieldsParser();
 		MockRequest request = new MockRequest("POST", "/something", "Some content");
-		request.setContentType("example");
+		request.setContentType("example/example");
 		
 		parser.parse(request);
 	}

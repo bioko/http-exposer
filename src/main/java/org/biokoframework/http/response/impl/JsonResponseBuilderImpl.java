@@ -27,23 +27,17 @@
 
 package org.biokoframework.http.response.impl;
 
+import com.google.common.net.MediaType;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.RequestNotSupportedException;
+import org.biokoframework.http.response.IResponseContentBuilder;
 import org.biokoframework.system.KILL_ME.commons.GenericFieldNames;
-import org.biokoframework.utils.domain.ErrorEntity;
-import org.biokoframework.utils.fields.FieldNames;
 import org.biokoframework.utils.fields.Fields;
 import org.json.simple.JSONValue;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Writer;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 
@@ -51,56 +45,31 @@ import java.util.Map;
  * @date Feb 26, 2014
  *
  */
-public class JsonResponseBuilderImpl extends AbstractHttpResponseBuilder {
+public class JsonResponseBuilderImpl implements IResponseContentBuilder {
 
-	private static final String JSON_EXTENSION = "json";
-	private static final String APPLICATION_JSON = "application/json";
-    private final Map<String, String> fHeadersMapping;
 
-    @Inject
-    public JsonResponseBuilderImpl(@Named("fieldsHttpHeaderToMap") Map<String, String> headersMapping) {
-        fHeadersMapping = headersMapping;
+    private static final String JSON_EXTENSION = "json";
+    private static final String JS_EXTENSION = "js";
+
+
+    @Override
+    public boolean isCompatibleWith(MediaType mediaType) {
+        return MediaType.JSON_UTF_8.is(mediaType);
     }
 
-	@Override
-	protected void safelyBuild(HttpServletRequest request, HttpServletResponse response, Fields input, Fields output)
-			throws IOException, RequestNotSupportedException {
-		
-		response.setContentType(APPLICATION_JSON + withCharsetFrom(request));
-		
-		Object responseContent = output.get(GenericFieldNames.RESPONSE);
+    @Override
+    public boolean isCompatibleWith(String requestExtension) {
+        return JSON_EXTENSION.equals(requestExtension) || JS_EXTENSION.equals(requestExtension);
+    }
 
-        for (Map.Entry<String, String> entry : fHeadersMapping.entrySet()) {
-            if (output.containsKey(entry.getKey())) {
-                response.setHeader(entry.getValue(), output.get(entry.getKey()).toString());
-            }
-        }
-		
-		Writer writer = response.getWriter();
+    @Override
+    public void build(HttpServletResponse response, Fields output) throws IOException, RequestNotSupportedException {
+        response.setContentType(MediaType.JSON_UTF_8.toString());
+
+        Object responseContent = output.get(GenericFieldNames.RESPONSE);
+
+        Writer writer = response.getWriter();
 		IOUtils.write(JSONValue.toJSONString(responseContent), writer);
-	}
-	
-	@Override
-	protected void checkAcceptType(List<String> acceptedTypes, String extension) throws RequestNotSupportedException {
+    }
 
-		if (!StringUtils.isEmpty(extension) && !JSON_EXTENSION.equals(extension)) {
-			ErrorEntity entity = new ErrorEntity();
-			entity.setAll(new Fields(
-					ErrorEntity.ERROR_CODE, FieldNames.UNSUPPORTED_FORMAT_CODE,
-					ErrorEntity.ERROR_MESSAGE, "Request with extension " + extension + " are not supported"));
-			throw new RequestNotSupportedException(entity);
-		} else if (acceptedTypes != null && !acceptedTypes.isEmpty()) {
-			for (String anAcceptedType : acceptedTypes) {
-				if (anAcceptedType.startsWith(APPLICATION_JSON) || anAcceptedType.startsWith(JOLLY_TYPE)) {
-					return;
-				}
-			}
-			ErrorEntity entity = new ErrorEntity();
-			entity.setAll(new Fields(
-					ErrorEntity.ERROR_CODE, FieldNames.UNSUPPORTED_FORMAT_CODE,
-					ErrorEntity.ERROR_MESSAGE, "Response with type " + extension + " are not supported"));
-			throw new RequestNotSupportedException(entity);
-		}
-	}
-	
 }

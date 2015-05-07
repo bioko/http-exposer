@@ -27,6 +27,7 @@
 
 package org.biokoframework.http.fields;
 
+import com.google.common.net.MediaType;
 import org.biokoframework.utils.fields.Fields;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,5 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 public interface IHttpFieldsParser {
 
 	Fields parse(HttpServletRequest request) throws RequestNotSupportedException;
+
+    boolean isCompatibleWith(MediaType mediaType);
 
 }

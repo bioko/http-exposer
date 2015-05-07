@@ -27,16 +27,14 @@
 
 package org.biokoframework.http.fields.impl;
 
+import com.google.common.net.MediaType;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.utils.fields.Fields;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 
 /**
  * 
@@ -46,7 +44,7 @@ import java.io.Writer;
  */
 public class JsonFieldsParser extends AbstractFieldsParser {
 
-	private static final String JSON_TYPE = "application/json";
+	private static final MediaType JSON_TYPE = MediaType.JSON_UTF_8.withoutParameters();
 
 	@Override
 	public Fields safelyParse(HttpServletRequest request) throws RequestNotSupportedException {		
@@ -56,9 +54,7 @@ public class JsonFieldsParser extends AbstractFieldsParser {
                 request.setCharacterEncoding("utf-8");
             }
             reader = request.getReader();
-			Writer writer = new StringWriter();
-			IOUtils.copy(reader, writer);
-			return Fields.fromJson(writer.toString());
+			return Fields.fromJson(IOUtils.toString(reader));
 		} catch (IOException exception) {
 			// TODO log exception
 			throw new RequestNotSupportedException(exception);
@@ -66,10 +62,15 @@ public class JsonFieldsParser extends AbstractFieldsParser {
 	}
 
 	@Override
-	protected void checkContentType(String contentType) throws RequestNotSupportedException {
-		if (!StringUtils.startsWith(contentType, JSON_TYPE)){
-			throw badContentType(contentType, JSON_TYPE);
+	protected void checkContentType(MediaType mediaType) throws RequestNotSupportedException {
+		if (!isCompatibleWith(mediaType)){
+			throw badContentType(mediaType, JSON_TYPE);
 		}
 	}
+
+    @Override
+    public boolean isCompatibleWith(MediaType mediaType) {
+        return mediaType.withoutParameters().is(JSON_TYPE);
+    }
 
 }

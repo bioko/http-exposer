@@ -43,7 +43,12 @@ import org.biokoframework.system.command.crud.DeleteEntityCommand;
 import org.biokoframework.system.command.crud.RetrieveEntityCommand;
 import org.biokoframework.system.command.crud.UpdateEntityCommand;
 import org.biokoframework.system.command.crud.annotation.CrudCommand;
+import org.biokoframework.system.command.crud.binary.DeleteBinaryEntityCommand;
+import org.biokoframework.system.command.crud.binary.GetBinaryEntityCommand;
+import org.biokoframework.system.command.crud.binary.PostBinaryEntityCommand;
+import org.biokoframework.system.command.crud.binary.PutBinaryEntityCommand;
 import org.biokoframework.system.command.crud.binary.annotation.BlobCrudCommand;
+import org.biokoframework.system.entity.binary.BinaryEntity;
 import org.biokoframework.system.services.authentication.all.AllAuthenticationService;
 import org.biokoframework.system.services.authentication.annotation.Auth;
 
@@ -134,36 +139,16 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 			}
 			
 			if (annotation.create()) {
-				IRouteMatcher matcher = createRouteMatcher(HttpMethod.POST, basePath);
-				IHandler handler = new GenericHandler(annotation.entity(), CreateEntityCommand.class, fInjector);
-				
-				handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
-				
-				addRoute(matcher, handler);
+                addRoutedCrudCommand(annotation, CreateEntityCommand.class, HttpMethod.POST, basePath, mandatory, roles);
 			}
 			if (annotation.read()) {
-				IRouteMatcher matcher = createRouteMatcher(HttpMethod.GET, basePath);
-				IHandler handler = new GenericHandler(annotation.entity(), RetrieveEntityCommand.class, fInjector);
-			
-				handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
-				
-				addRoute(matcher, handler);
+                addRoutedCrudCommand(annotation, RetrieveEntityCommand.class, HttpMethod.GET, basePath, mandatory, roles);
 			}
 			if (annotation.update()) {
-				IRouteMatcher matcher = createRouteMatcher(HttpMethod.PUT, basePath);
-				IHandler handler = new GenericHandler(annotation.entity(), UpdateEntityCommand.class, fInjector);
-				
-				handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
-				
-				addRoute(matcher, handler);
+                addRoutedCrudCommand(annotation, UpdateEntityCommand.class, HttpMethod.PUT, basePath, mandatory, roles);
 			}
 			if (annotation.delete()) {
-				IRouteMatcher matcher = createRouteMatcher(HttpMethod.DELETE, basePath);
-				IHandler handler = new GenericHandler(annotation.entity(), DeleteEntityCommand.class, fInjector);
-
-				handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
-				
-				addRoute(matcher, handler);
+                addRoutedCrudCommand(annotation, DeleteEntityCommand.class, HttpMethod.DELETE, basePath, mandatory, roles);
 			}
 		} catch (IllegalAccessException exception) {
 			// TODO handle exception
@@ -171,11 +156,61 @@ public class AnnotationHandlerLocator extends AbstractHandlerLocator {
 		}
 	}
 
-	protected void registerBlobCrudCommand(Field aCandidateCommand) {
-		// TODO Auto-generated method stub
-		
+    private void addRoutedCrudCommand(CrudCommand annotation, Class<? extends ICommand> commandClass, HttpMethod method, String basePath, boolean mandatory, List<String> roles) {
+        IRouteMatcher matcher = createRouteMatcher(method, basePath);
+        IHandler handler = new GenericHandler(annotation.entity(), commandClass, fInjector);
+        handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
+        addRoute(matcher, handler);
+    }
+
+    protected void registerBlobCrudCommand(Field aCandidateCommand) {
+        try {
+            BlobCrudCommand annotation = aCandidateCommand.getAnnotation(BlobCrudCommand.class);
+            String basePath = (String) aCandidateCommand.get(null);
+            if (!basePath.startsWith("/")) {
+                basePath = "/" + basePath;
+                if (!basePath.startsWith("/")) {
+                    basePath = "/" + basePath;
+                }
+                if (!basePath.contains("/{<\\d*>id}")) {
+                    basePath = basePath + "/{<\\d*>id}";
+                }
+
+                boolean mandatory = false;
+                List<String> roles = Collections.emptyList();
+                if (aCandidateCommand.isAnnotationPresent(Auth.class)) {
+                    mandatory = true;
+                    roles = Arrays.asList(aCandidateCommand.getAnnotation(Auth.class).roles());
+                }
+
+                if (annotation.create()) {
+                    addRoutedBinaryCrudCommand(HttpMethod.POST, basePath, PostBinaryEntityCommand.class, mandatory, roles);
+                }
+                if (annotation.read()) {
+                    addRoutedBinaryCrudCommand(HttpMethod.GET, basePath, GetBinaryEntityCommand.class, mandatory, roles);
+                }
+//                if (annotation.head()) {
+//                    addRoutedBinaryCrudCommand(HttpMethod.HEAD, basePath, HeadBinaryEntityCommand.class, mandatory, roles);
+//                }
+                if (annotation.update()) {
+                    addRoutedBinaryCrudCommand(HttpMethod.PUT, basePath, PutBinaryEntityCommand.class, mandatory, roles);
+                }
+                if (annotation.delete()) {
+                    addRoutedBinaryCrudCommand(HttpMethod.DELETE, basePath, DeleteBinaryEntityCommand.class, mandatory, roles);
+                }
+            }
+        } catch (IllegalAccessException exception) {
+            // TODO handle exception
+                exception.printStackTrace();
+        }
 	}
-	
-	
+
+    private void addRoutedBinaryCrudCommand(HttpMethod method, String basePath, Class<? extends ICommand> commandsClass, boolean mandatory, List<String> roles) {
+        IRouteMatcher matcher = createRouteMatcher(method, basePath);
+        IHandler handler = new GenericHandler(BinaryEntity.class, commandsClass, fInjector);
+        handler = new SecurityHandler(handler, roles, fAuthService, mandatory);
+        addRoute(matcher, handler);
+    }
+
 
 }

@@ -27,6 +27,8 @@
 
 package org.biokoframework.http.fields.impl;
 
+import com.google.common.net.MediaType;
+import org.apache.commons.lang3.StringUtils;
 import org.biokoframework.http.fields.IHttpFieldsParser;
 import org.biokoframework.http.fields.RequestNotSupportedException;
 import org.biokoframework.utils.domain.ErrorEntity;
@@ -45,7 +47,11 @@ public abstract class AbstractFieldsParser implements IHttpFieldsParser {
 	
 	@Override
 	public final Fields parse(HttpServletRequest request) throws RequestNotSupportedException {
-		checkContentType(request.getContentType());
+        if (StringUtils.isEmpty(request.getContentType())) {
+            checkContentType(null);
+        } else {
+            checkContentType(MediaType.parse(request.getContentType()));
+        }
 		
 		return safelyParse(request);
 	}
@@ -55,15 +61,13 @@ public abstract class AbstractFieldsParser implements IHttpFieldsParser {
 	/**
 	 * Check if the parser can handle the request content
 	 * 
-	 * @param contentType The content type as in the request
+	 * @param mediaType The content type as in the request
 	 * @throws RequestNotSupportedException If it cannot
 	 */
-	protected abstract void checkContentType(String contentType) throws RequestNotSupportedException;
+	protected abstract void checkContentType(MediaType mediaType) throws RequestNotSupportedException;
 
-	protected RequestNotSupportedException badContentType(String foundContentType, String expectedContentType) {
-		String message = new StringBuilder()
-				.append("Request type ").append(foundContentType).append(" not supported. ")
-				.append(expectedContentType).append(" expected.").toString();
+	protected RequestNotSupportedException badContentType(MediaType foundContentType, MediaType expectedContentType) {
+		String message = "Request type " + foundContentType + " not supported. " + expectedContentType + " expected.";
 		
 		ErrorEntity entity = new ErrorEntity();
 		entity.setAll(new Fields(

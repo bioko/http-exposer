@@ -28,6 +28,7 @@
 package org.biokoframework.http.routing;
 
 import org.biokoframework.system.KILL_ME.exception.SystemException;
+import org.biokoframework.utils.domain.ErrorEntity;
 
 /**
  * 
@@ -42,5 +43,9 @@ public class RouteNotSupportedException extends SystemException {
 	public RouteNotSupportedException(Exception exception) {
 		super(exception);
 	}
+
+    public RouteNotSupportedException(ErrorEntity entity) {
+        super(entity);
+    }
 
 }

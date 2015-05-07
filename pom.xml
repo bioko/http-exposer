@@ -3,19 +3,19 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.biokoframework</groupId>
     <artifactId>http-exposer</artifactId>
-    <version>0.3.1</version>
+    <version>0.4</version>
     <name>Bioko Framework - HttpExposer</name>
     <url>http://biokoframework.org</url>
     <dependencies>
         <dependency>
             <groupId>org.biokoframework</groupId>
             <artifactId>utils</artifactId>
-            <version>0.3</version>
+            <version>0.4</version>
         </dependency>
         <dependency>
             <groupId>org.biokoframework</groupId>
             <artifactId>system</artifactId>
-            <version>0.3.1</version>
+            <version>0.4</version>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
@@ -117,6 +117,7 @@
                             <targetPath>WEB-INF</targetPath>
                             <includes>
                                 <include>**/web.xml</include>
+                                <include>**/context.xml</include>
                             </includes>
                         </resource>
                     </webResources>
@@ -125,7 +126,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.6.4.201312101107</version>
+                <version>0.7.2.201409121644</version>
                 <executions>
                     <execution>
                         <goals>

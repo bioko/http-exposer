@@ -28,12 +28,11 @@
 
 package org.biokoframework.http.response.impl;
 
+import com.google.common.net.MediaType;
 import org.biokoframework.http.mock.MockRequest;
 import org.biokoframework.http.mock.MockResponse;
 import org.biokoframework.utils.fields.Fields;
 import org.junit.Test;
-
-import java.util.Collections;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -45,12 +44,12 @@ import static org.junit.Assert.assertThat;
  * @date Feb 26, 2014
  *
  */
-public class HttpResponseBuilderImplTest {
+public class JsonResponseBuilderImplTest {
 
 	@Test
 	public void simpleTest() throws Exception {
 		
-		JsonResponseBuilderImpl builder = new JsonResponseBuilderImpl(Collections.<String, String>emptyMap());
+		JsonResponseBuilderImpl builder = new JsonResponseBuilderImpl();
 		
 		MockRequest httpRequest = new MockRequest("GET", "/something.json/");
 		MockResponse httpResponse = new MockResponse();
@@ -64,31 +63,32 @@ public class HttpResponseBuilderImplTest {
 		Fields output = new Fields(
 				"RESPONSE", response);
 		
-		builder.build(httpRequest, httpResponse, input, output);
+		builder.build(httpResponse, output);
 		
-		assertThat(httpResponse.getStatus(), is(200));
-		assertThat(httpResponse.getContentType(), is(equalTo("application/json; charset=utf-8")));
+		assertThat(httpResponse.getContentType(), is(equalTo(MediaType.JSON_UTF_8.toString())));
 		assertThat(httpResponse.toString(), is(equalTo(response.toJSONString())));
 		
 	}
 
     @Test
-    public void headerTest() throws Exception {
+    public void acceptOnlyJsonExtension() throws Exception {
+        JsonResponseBuilderImpl builder = new JsonResponseBuilderImpl();
 
-        JsonResponseBuilderImpl builder = new JsonResponseBuilderImpl(Collections.singletonMap("aField", "The-Header"));
+        assertThat(builder.isCompatibleWith("json"), is(true));
+        assertThat(builder.isCompatibleWith("js"), is(true));
 
-        MockRequest httpRequest = new MockRequest("GET", "/something.json/");
-        MockResponse httpResponse = new MockResponse();
+        assertThat(builder.isCompatibleWith("txt"), is(false));
+    }
 
-        Fields input = new Fields();
-        Fields output = new Fields("aField", "hasAStringValue");
+    @Test
+    public void acceptJsonMimeAndTheLike() throws Exception {
+        JsonResponseBuilderImpl builder = new JsonResponseBuilderImpl();
 
-        builder.build(httpRequest, httpResponse, input, output);
+        assertThat(builder.isCompatibleWith(MediaType.JSON_UTF_8), is(true));
+        assertThat(builder.isCompatibleWith(MediaType.ANY_APPLICATION_TYPE), is(true));
+        assertThat(builder.isCompatibleWith(MediaType.ANY_TYPE), is(true));
 
-        assertThat(httpResponse.getStatus(), is(200));
-        assertThat(httpResponse.getContentType(), is(equalTo("application/json; charset=utf-8")));
-        assertThat(httpResponse.getHeader("The-Header"), is(equalTo("hasAStringValue")));
-
+        assertThat(builder.isCompatibleWith(MediaType.ANY_TEXT_TYPE), is(false));
     }
 
 }

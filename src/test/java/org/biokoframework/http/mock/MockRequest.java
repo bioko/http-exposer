@@ -29,10 +29,7 @@ package org.biokoframework.http.mock;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.security.Principal;
 import java.util.*;
 
@@ -47,7 +44,8 @@ public class MockRequest implements HttpServletRequest {
 	private final String fMethod;
 	private final String fPath;
 	private final String fContent;
-	private String fType;
+    private final List<Part> fMultipartRequestParts;
+    private String fType;
 	private Map<String, String> fHeaders;
 	private String fCharacterEncoding;
 
@@ -59,11 +57,19 @@ public class MockRequest implements HttpServletRequest {
 		fMethod = method;
 		fPath = path;
 		fContent = content;
-		fHeaders = new HashMap<>();
+        fMultipartRequestParts = null;
+        fHeaders = new HashMap<>();
 	}
-	
 
-	@Override
+    public MockRequest(String method, String path, Part... multipartRequestParts) {
+        fMethod = method;
+        fPath = path;
+        fMultipartRequestParts = Arrays.asList(multipartRequestParts);
+        fContent = null;
+    }
+
+
+    @Override
 	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
 		fCharacterEncoding = env;
 	}
@@ -83,9 +89,13 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public ServletInputStream getInputStream() throws IOException {
-		return new MOCSIS(fContent.getBytes());
+		return new MockServletIS(fContent.getBytes());
 	}
-	
+
+    @Override
+    public BufferedReader getReader() throws IOException {
+        return new BufferedReader(new StringReader(fContent));
+    }
 
 	@Override
 	public String getMethod() {
@@ -129,11 +139,20 @@ public class MockRequest implements HttpServletRequest {
         return null;
     }
 
-    private static final class MOCSIS extends ServletInputStream {
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        if (fMultipartRequestParts == null) {
+            throw new UnsupportedOperationException();
+        } else {
+            return fMultipartRequestParts;
+        }
+    }
+
+    private static final class MockServletIS extends ServletInputStream {
 
 		private ByteArrayInputStream fIS;
 
-		public MOCSIS(byte[] bytes) {
+		public MockServletIS(byte[] bytes) {
 			fIS = new ByteArrayInputStream(bytes);
 		}
 
@@ -211,11 +230,6 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public int getServerPort() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public BufferedReader getReader() throws IOException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -443,11 +457,6 @@ public class MockRequest implements HttpServletRequest {
 
 	@Override
 	public void logout() throws ServletException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Collection<Part> getParts() throws IOException, ServletException {
 		throw new UnsupportedOperationException();
 	}
 
